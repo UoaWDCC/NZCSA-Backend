@@ -7,6 +7,7 @@ module.exports.protect = async (req, res, next) => {
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     // take the second part of array
+    // eslint-disable-next-line prefer-destructuring
     token = req.headers.authorization.split(' ')[1];
   }
 
