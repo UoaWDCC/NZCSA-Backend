@@ -4,17 +4,19 @@ const ErrorResponse = require('../utils/errorResponse');
 const sendEmail = require('../utils/sendEmail');
 
 exports.register = async (req, res) => {
-  const { username, email, password } = req.body;
+  
+  const {firstname, lastname, email, password } = req.body;
 
   try {
     const user = await User.create({
-      username,
+      firstname,
+      lastname,
       email,
       password,
     });
 
     sendToken(user, 201, res);
-  } catch (error) {
+  } catch (error) { 
     res.status(500).json({
       success: false,
       info: error.message,
@@ -23,6 +25,7 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res, next) => {
+
   const { email, password } = req.body;
 
   if (!email || !password) {
