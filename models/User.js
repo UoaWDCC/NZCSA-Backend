@@ -4,10 +4,17 @@ const cryto = require('crypto');
 const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
-  username: {
+  firstname: {
     type: String,
-    required: [true, 'Please provide your username'],
+    maxlength: 20,
+    required: [true, 'Please provide your firstname'],
   },
+  lastname: {
+    type: String,
+    maxlength: 20,
+    required: [true, 'Please provide your lastname'],
+  },
+
   email: {
     type: String,
     required: [true, 'Please provide a email'],
@@ -20,9 +27,38 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Please provide a password'],
-    minlength: 6,
+    minlength: 8,
+    match:[
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+      'Please provide a valid password with at least 8 characters include upper and lower letter, and number'
+    ],
     select: false,
   },
+  gender:{
+    type: String,
+    maxlength: 1,
+  },
+  university:{
+    type: String,
+  },
+  major:{
+    type: String,
+  },
+  year:{
+    type: String,
+  },
+  faculty:{
+    type: String,
+  },
+  dateofbirth:{
+    type: String,
+  },
+  wechatid:{
+    type: String,
+  },
+
+
+  
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 });
