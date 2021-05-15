@@ -4,6 +4,11 @@ const cryto = require('crypto');
 const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
+  isAdmin: {
+		type: Boolean,
+		default: false
+	},
+
   firstname: {
     type: String,
     maxlength: 20,
@@ -36,6 +41,7 @@ const UserSchema = new mongoose.Schema({
   },
   gender:{
     type: String,
+    enum: ["F", "M"],
     maxlength: 1,
   },
   university:{

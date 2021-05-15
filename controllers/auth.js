@@ -7,6 +7,8 @@ exports.register = async (req, res) => {
   
   const {firstname, lastname, email, password } = req.body;
 
+  console.log(req.body)
+
   try {
     const user = await User.create({
       firstname,
@@ -53,7 +55,9 @@ exports.login = async (req, res, next) => {
 };
 
 exports.forgotpassword = async (req, res, next) => {
-  const { email } = req.body;
+  const { email } = req.body.data;
+
+  console.log(email);
 
   try {
     const user = await User.findOne({ email });
@@ -66,7 +70,7 @@ exports.forgotpassword = async (req, res, next) => {
 
     await user.save();
 
-    const resetURL = `http://localhost:3000/passwordreset/${resetToken}`;
+    const resetURL = `http://localhost:3000/resetPassword/${resetToken}`;
 
     const message = `<body style="background-color: #e9ecef;">
     <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
@@ -124,7 +128,7 @@ exports.forgotpassword = async (req, res, next) => {
                       <table border="0" cellpadding="0" cellspacing="0">
                         <tr>
                           <td align="center" bgcolor="#b51c07" style="border-radius: 6px;">
-                            <a href="https://sendgrid.com" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Click me</a>
+                            <a href=${resetURL} target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Click me</a>
                           </td>
                         </tr>
                       </table>
@@ -196,7 +200,7 @@ exports.resetpassword = async (req, res, next) => {
       return next(new ErrorResponse('Invaild Reset Token', 400));
     }
 
-    user.password = req.body.password;
+    user.password = req.body.data.password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExipre = undefined;
 
