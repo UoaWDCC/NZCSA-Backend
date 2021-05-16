@@ -4,7 +4,6 @@ const cryto = require('crypto');
 const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
-<<<<<<< HEAD
 
   isAdmin: {
 		type: Boolean,
@@ -22,18 +21,6 @@ const UserSchema = new mongoose.Schema({
     maxlength: 20,
     required: [true, 'Please provide your lastname'],
   },
-=======
-  firstname: {
-    type: String,
-    maxlength: 20,
-    required: [true, 'Please provide your firstname'],
-  },
-  lastname: {
-    type: String,
-    maxlength: 20,
-    required: [true, 'Please provide your lastname'],
-  },
->>>>>>> master
 
   email: {
     type: String,
@@ -56,10 +43,7 @@ const UserSchema = new mongoose.Schema({
   },
   gender:{
     type: String,
-<<<<<<< HEAD
     enum: ["F", "M"],
-=======
->>>>>>> master
     maxlength: 1,
   },
   university:{
@@ -75,11 +59,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
   },
   dateofbirth:{
-<<<<<<< HEAD
     type: Date,
-=======
-    type: String,
->>>>>>> master
   },
   wechatid:{
     type: String,
