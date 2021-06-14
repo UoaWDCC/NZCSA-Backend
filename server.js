@@ -1,6 +1,7 @@
 require('dotenv').config({ path: './config.env' });
 
 const express = require('express');
+const cors = require('cors');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/error');
 
@@ -9,10 +10,11 @@ connectDB();
 const app = express();
 
 app.use(express.json());
-
+app.use(cors());
 // redirect to auth routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/private', require('./routes/private'));
+app.use('/api/admin', require('./routes/admin'));
 
 // Error Handler (last piece of middleware)
 app.use(errorHandler);
