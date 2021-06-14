@@ -6,10 +6,14 @@ const jwt = require('jsonwebtoken');
 const UserSchema = new mongoose.Schema({
 
   isAdmin: {
-		type: Boolean,
-		default: false
-    
-	},
+    type: Boolean,
+    default: false,
+  },
+
+  isMembership: {
+    type: Boolean,
+    default: false,
+  },
 
   firstname: {
     type: String,
@@ -34,39 +38,37 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Please provide a password'],
-    minlength: 8,
-    match:[
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
-      'Please provide a valid password with at least 8 characters include upper and lower letter, and number'
-    ],
+    minlength: 3,
+    // match: [
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+    //   'Please provide a valid password with at least 8 characters include upper and lower letter, and number',
+    // ],
     select: false,
   },
-  gender:{
+  gender: {
     type: String,
-    enum: ["F", "M"],
+    enum: ['F', 'M'],
     maxlength: 1,
   },
-  university:{
+  university: {
     type: String,
   },
-  major:{
+  major: {
     type: String,
   },
-  year:{
+  year: {
     type: String,
   },
-  faculty:{
+  faculty: {
     type: String,
   },
-  dateofbirth:{
+  dateofbirth: {
     type: Date,
   },
-  wechatid:{
+  wechatid: {
     type: String,
   },
 
-
-  
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 });
