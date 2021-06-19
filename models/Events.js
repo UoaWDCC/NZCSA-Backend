@@ -16,6 +16,7 @@ const EventSchema = new mongoose.Schema({
     required: 'Event name cannot be blank',
   },
 
+
   eventPrice: {
     type: Number,
     min: 0,
@@ -41,6 +42,7 @@ const EventSchema = new mongoose.Schema({
     type: Date,
     default: () => Date.now() + 7 * 24 * 60 * 60 * 1000,
   },
+
   userList: [
     {
       _id: false,
