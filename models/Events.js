@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 const EventSchema = new mongoose.Schema({
 
-  active: {
+  isActive: {
     type: Boolean,
     default: true,
   },
@@ -14,6 +14,14 @@ const EventSchema = new mongoose.Schema({
     type: String,
     trim: true,
     required: 'Event name cannot be blank',
+  },
+
+
+  eventPrice: {
+    type: Number,
+    min: 0,
+    max: 200,
+    default: 0,
   },
 
   eventLocation: {
@@ -34,6 +42,19 @@ const EventSchema = new mongoose.Schema({
     type: Date,
     default: () => Date.now() + 7 * 24 * 60 * 60 * 1000,
   },
+
+  userList: [
+    {
+      _id: false,
+      userId: {
+        type: String,
+      },
+      isPaid: {
+        type: Boolean,
+        defualt: false,
+      },
+    },
+  ],
 
 });
 
