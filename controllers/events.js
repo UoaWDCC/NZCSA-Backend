@@ -1,6 +1,7 @@
 const Event = require('../models/Events');
 const ErrorResponse = require('../utils/errorResponse');
 
+// Normal User API functions:
 exports.getEvents = async (req, res) => {
   try {
     await Event.find({}, (error, events) => {
@@ -18,6 +19,55 @@ exports.getEvents = async (req, res) => {
   }
 };
 
+exports.signUpRSVP = async (req, res, next) => {
+  const { eventId } = req.body;
+
+  try {
+    const { user } = req;
+
+    const lst = user.attendedEvents;
+
+    if (lst.includes(eventId)) {
+      return next(new ErrorResponse('You have signed this event', 401));
+    }
+
+    user.attendedEvents.push(eventId);
+
+    await user.save();
+    res.status(200).json({
+      success: true,
+      data: `event ${eventId} Added.`,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+// exports.cancelEvents = async (req, res, next) => {
+//   const { eventId } = req.body;
+
+//   try {
+//     const { user } = req;
+
+//     const lst = user.attendedEvents;
+
+//     if (!lst.includes(eventId)) {
+//       return next(new ErrorResponse('You have not signed this event', 401));
+//     }
+
+//     user.attendedEvents.push(eventId);
+
+//     await user.save();
+//     res.status(200).json({
+//       success: true,
+//       data: `event ${eventId} Added.`,
+//     });
+//   } catch (e) {
+//     next(e);
+//   }
+// };
+
+// Admin User API Functions:
 exports.addEvents = async (req, res, next) => {
   const {
     eventName, eventLocation, eventDescription, startTime, endTime,
