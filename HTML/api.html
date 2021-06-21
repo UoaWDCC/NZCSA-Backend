@@ -1,117 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>API Document</title>
     <style>
-        #customers {
-          font-family: Arial, Helvetica, sans-serif;
-          border-collapse: collapse;
-          width: 100%;
-          margin-bottom: 3%;
-        }
-        
-        #customers td, #customers th {
-          border: 1px solid #ddd;
-          padding: 8px;
-        }
-        
-        #customers tr:nth-child(even){background-color: #f2f2f2;}
-        
-        #customers tr:hover {background-color: #ddd;}
-        
-        #customers th {
-          padding-top: 12px;
-          padding-bottom: 12px;
-          text-align: left;
-          background-color: #04AA6D;
-          color: white;
-        }
-        </style>
-</head>
-<body>
-    <table id="customers">
-        <tr>
-          <th>Auth API</th>
-          <th>Method</th>
-          <th>Token</th>
-        </tr>
-        <tr>
-          <td>https://nzcsa-backend.herokuapp.com/api/auth/register</td>
-          <td>POST</td>
-          <td>/</td>
-        </tr>
-        <tr>
-          <td>https://nzcsa-backend.herokuapp.com/api/auth/login</td>
-          <td>POST</td>
-          <td>/</td>
-        </tr>
-        <tr>
-          <td>https://nzcsa-backend.herokuapp.com/api/auth/forgotpassword</td>
-          <td>POST</td>
-          <td>/</td>
-        </tr>
-        <tr>
-          <td>https://nzcsa-backend.herokuapp.com/api/auth/resetpassword</td>
-          <td>PUT</td>
-          <td>resetpwdToken</td>
-        </tr>
-      </table>
+      #customers {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 3%;
+      }
 
-      <table id="customers">
-        <tr>
-          <th>Private API</th>
-          <th>Method</th>
-          <th>Token</th>
-        </tr>
-        <tr>
-          <td>https://nzcsa-backend.herokuapp.com/api/private/get-events-info</td>
-          <td>GET</td>
-          <td>/</td>
-        </tr>
-        <tr>
-          <td>https://nzcsa-backend.herokuapp.com/api/private/sign-up-membership</td>
-          <td>POST</td>
-          <td>authToken</td>
-        </tr>
-        <tr>
-          <td>https://nzcsa-backend.herokuapp.com/api/private/get-user-info</td>
-          <td>GET</td>
-          <td>authToken</td>
-        </tr>
-        <tr>
-          <td>https://nzcsa-backend.herokuapp.com/api/private/sign-up-event</td>
-          <td>POST</td>
-          <td>authToken</td>
-        </tr>
-        
-      </table>
-      
-      <table id="customers">
-        <tr>
-          <th>Admin API</th>
-          <th>Method</th>
-          <th>Token</th>
-        </tr>
-        <tr>
-          <td>https://nzcsa-backend.herokuapp.com/api/admin/add-events</td>
-          <td>POST</td>
-          <td>authToken</td>
-        </tr>
-        <tr>
-          <td>https://nzcsa-backend.herokuapp.com/api/admin/delete-events</td>
-          <td>DELETE</td>
-          <td>authToken</td>
-        </tr>
-        <tr>
-          <td>https://nzcsa-backend.herokuapp.com/api/private/show-event-user-info</td>
-          <td>GET</td>
-          <td>authToken</td>
-        </tr>
-        
-      </table>
-    
-</body>
+      #customers td,
+      #customers th {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+
+      #customers tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      #customers tr:hover {
+        background-color: #ddd;
+      }
+
+      #customers th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #04aa6d;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <table id="customers">
+      <tr>
+        <th>Auth API</th>
+        <th>Method</th>
+        <th>Token</th>
+      </tr>
+      <tr>
+        <td>https://nzcsa-backend.herokuapp.com/api/auth/register</td>
+        <td>POST</td>
+        <td>/</td>
+      </tr>
+      <tr>
+        <td>https://nzcsa-backend.herokuapp.com/api/auth/login</td>
+        <td>POST</td>
+        <td>/</td>
+      </tr>
+      <tr>
+        <td>https://nzcsa-backend.herokuapp.com/api/auth/forgotpassword</td>
+        <td>POST</td>
+        <td>/</td>
+      </tr>
+      <tr>
+        <td>https://nzcsa-backend.herokuapp.com/api/auth/resetpassword</td>
+        <td>PUT</td>
+        <td>resetpwdToken</td>
+      </tr>
+    </table>
+
+    <table id="customers">
+      <tr>
+        <th>Private API</th>
+        <th>Method</th>
+        <th>Token</th>
+      </tr>
+      <tr>
+        <td>https://nzcsa-backend.herokuapp.com/api/private/get-events-info</td>
+        <td>GET</td>
+        <td>/</td>
+      </tr>
+      <tr>
+        <td>
+          https://nzcsa-backend.herokuapp.com/api/private/sign-up-membership
+        </td>
+        <td>POST</td>
+        <td>authToken</td>
+      </tr>
+      <tr>
+        <td>https://nzcsa-backend.herokuapp.com/api/private/get-user-info</td>
+        <td>GET</td>
+        <td>authToken</td>
+      </tr>
+      <tr>
+        <td>https://nzcsa-backend.herokuapp.com/api/private/sign-up-event</td>
+        <td>POST</td>
+        <td>authToken</td>
+      </tr>
+    </table>
+
+    <table id="customers">
+      <tr>
+        <th>Admin API</th>
+        <th>Method</th>
+        <th>Token</th>
+        <th>Body</th>
+      </tr>
+      <tr>
+        <td>https://nzcsa-backend.herokuapp.com/api/admin/add-events</td>
+        <td>POST</td>
+        <td>authToken</td>
+      </tr>
+      <tr>
+        <td>https://nzcsa-backend.herokuapp.com/api/admin/delete-events</td>
+        <td>DELETE</td>
+        <td>authToken</td>
+      </tr>
+      <tr>
+        <td>
+          https://nzcsa-backend.herokuapp.com/api/private/show-event-user-info
+        </td>
+        <td>GET</td>
+        <td>authToken</td>
+      </tr>
+      <tr>
+        <td>https://nzcsa-backend.herokuapp.com/api/admin/show-member-list</td>
+        <td>GET</td>
+        <td>authToken</td>
+        <td>/</td>
+      </tr>
+      <tr>
+        <td>https://nzcsa-backend.herokuapp.com/api/admin/promo-to-member</td>
+        <td>POST</td>
+        <td>authToken</td>
+        <td>{ "userId": "60d04e9b8ffae49fc174a3fa" }</td>
+      </tr>
+      <tr>
+        <td>https://nzcsa-backend.herokuapp.com/api/admin/delete-member</td>
+        <td>DELETE</td>
+        <td>authToken</td>
+        <td>{ "userId": "60d04e9e8ffae49fc174a3fb" }</td>
+      </tr>
+    </table>
+  </body>
 </html>
