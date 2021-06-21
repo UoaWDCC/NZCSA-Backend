@@ -1,7 +1,6 @@
 const Event = require('../models/Events');
 const ErrorResponse = require('../utils/errorResponse');
 
-
 // Normal User API functions:
 exports.getEvents = async (req, res) => {
   try {
