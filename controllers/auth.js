@@ -208,7 +208,6 @@ exports.resetpassword = async (req, res, next) => {
       info: 'Password reset success',
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
