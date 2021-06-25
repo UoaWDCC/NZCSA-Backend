@@ -93,32 +93,30 @@ exports.addEvents = async (req, res, next) => {
 };
 
 exports.deleteEvents = async (req, res, next) => {
-  const { _id } = req.body;
+  const { eventId } = req.params;
 
   try {
     const { isAdmin } = req.user;
-    // console.log(isAdmin);
 
     if (!isAdmin) {
       return next(new ErrorResponse('You are not admin', 401));
     }
-    const selectedEvent = await Event.findById(_id);
+    const selectedEvent = await Event.findById(eventId);
 
     if (!selectedEvent) {
       return next(new ErrorResponse('Event does not exist', 401));
     }
 
-    await Event.findByIdAndRemove(_id, (error, data) => {
+    await Event.findByIdAndRemove(eventId, (error, data) => {
       if (error) {
         return next(error);
       }
       res.status(200).json({
         success: true,
-        data: `${_id} Deleted.`,
+        data: `${eventId} Deleted.`,
       });
     });
   } catch (error) {
-    // console.log(error);
     next(error);
   }
 };

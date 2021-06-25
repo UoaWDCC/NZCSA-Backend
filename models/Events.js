@@ -16,7 +16,6 @@ const EventSchema = new mongoose.Schema({
     required: 'Event name cannot be blank',
   },
 
-
   eventPrice: {
     type: Number,
     min: 0,

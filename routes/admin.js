@@ -7,7 +7,7 @@ const router = express.Router();
 const { protect } = require('../middleware/auth');
 
 router.route('/add-events').post(protect, addEvents);
-router.route('/delete-events').delete(protect, deleteEvents);
+router.route('/delete-events/:eventId').delete(protect, deleteEvents);
 
 router.route('/show-event-user-info').delete(protect, deleteEvents);
 router.route('/show-member-list').get(protect, showMemberList);
