@@ -70,7 +70,7 @@ exports.signUpRSVP = async (req, res, next) => {
 // Admin User API Functions:
 exports.addEvents = async (req, res, next) => {
   const {
-    eventName, eventLocation, eventDescription, startTime, endTime,
+    eventName, eventLocation, eventPrice, eventDescription, startTime,
   } = req.body;
 
   try {
@@ -80,8 +80,8 @@ exports.addEvents = async (req, res, next) => {
       return next(new ErrorResponse('You are not admin', 401));
     }
 
-    const event = await Event.create({
-      eventName, eventLocation, eventDescription, startTime, endTime,
+    await Event.create({
+      eventName, eventLocation, eventPrice, eventDescription, startTime,
     });
     res.status(200).json({
       success: true,
