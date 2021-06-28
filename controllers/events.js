@@ -70,7 +70,7 @@ exports.signUpRSVP = async (req, res, next) => {
 // Admin User API Functions:
 exports.addEvents = async (req, res, next) => {
   const {
-    eventName, eventLocation, eventPrice, eventDescription, startTime,
+    eventName, eventLocation, eventPrice, eventDescription, startTime, eventImgUrl,
   } = req.body;
 
   try {
@@ -81,7 +81,7 @@ exports.addEvents = async (req, res, next) => {
     }
 
     await Event.create({
-      eventName, eventLocation, eventPrice, eventDescription, startTime,
+      eventName, eventLocation, eventPrice, eventDescription, startTime, eventImgUrl,
     });
     res.status(200).json({
       success: true,

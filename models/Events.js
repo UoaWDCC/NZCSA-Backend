@@ -9,6 +9,10 @@ const EventSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  eventImgUrl: {
+    type: String,
+    trim: true,
+  },
 
   eventName: {
     type: String,
