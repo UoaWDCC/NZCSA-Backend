@@ -25,14 +25,24 @@ exports.signUpRSVP = async (req, res, next) => {
   try {
     const { user } = req;
 
-    const lst = user.attendedEvents;
+    const event = await Event.findOne({ _id: eventId });
 
-    if (lst.includes(eventId)) {
+    if (!event) {
+      return next(new ErrorResponse('Event not found', 401));
+    }
+
+    const lst = event.userList;
+
+    // eslint-disable-next-line no-underscore-dangle
+    if (lst.includes(user._id)) {
       return next(new ErrorResponse('You have signed this event', 401));
     }
 
     user.attendedEvents.push(eventId);
-
+    // eslint-disable-next-line no-underscore-dangle
+    event.userList.push(user._id);
+    console.log(event);
+    await event.save();
     await user.save();
     res.status(200).json({
       success: true,
