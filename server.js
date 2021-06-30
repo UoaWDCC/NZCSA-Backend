@@ -16,10 +16,6 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/private', require('./routes/private'));
 app.use('/api/admin', require('./routes/admin'));
 
-app.get('/', (req, res) => {
-  res.sendFile('HTML/api.html', { root: __dirname });
-});
-
 // Error Handler (last piece of middleware)
 app.use(errorHandler);
 

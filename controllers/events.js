@@ -25,14 +25,24 @@ exports.signUpRSVP = async (req, res, next) => {
   try {
     const { user } = req;
 
-    const lst = user.attendedEvents;
+    const event = await Event.findOne({ _id: eventId });
 
-    if (lst.includes(eventId)) {
+    if (!event) {
+      return next(new ErrorResponse('Event not found', 401));
+    }
+
+    const lst = event.userList;
+
+    // eslint-disable-next-line no-underscore-dangle
+    if (lst.includes(user._id)) {
       return next(new ErrorResponse('You have signed this event', 401));
     }
 
     user.attendedEvents.push(eventId);
-
+    // eslint-disable-next-line no-underscore-dangle
+    event.userList.push(user._id);
+    console.log(event);
+    await event.save();
     await user.save();
     res.status(200).json({
       success: true,
@@ -70,7 +80,7 @@ exports.signUpRSVP = async (req, res, next) => {
 // Admin User API Functions:
 exports.addEvents = async (req, res, next) => {
   const {
-    eventName, eventLocation, eventDescription, startTime, endTime,
+    eventName, eventLocation, eventPrice, eventDescription, startTime, eventImgUrl,
   } = req.body;
 
   try {
@@ -80,8 +90,8 @@ exports.addEvents = async (req, res, next) => {
       return next(new ErrorResponse('You are not admin', 401));
     }
 
-    const event = await Event.create({
-      eventName, eventLocation, eventDescription, startTime, endTime,
+    await Event.create({
+      eventName, eventLocation, eventPrice, eventDescription, startTime, eventImgUrl,
     });
     res.status(200).json({
       success: true,
@@ -93,32 +103,30 @@ exports.addEvents = async (req, res, next) => {
 };
 
 exports.deleteEvents = async (req, res, next) => {
-  const { _id } = req.body;
+  const { eventId } = req.params;
 
   try {
     const { isAdmin } = req.user;
-    // console.log(isAdmin);
 
     if (!isAdmin) {
       return next(new ErrorResponse('You are not admin', 401));
     }
-    const selectedEvent = await Event.findById(_id);
+    const selectedEvent = await Event.findById(eventId);
 
     if (!selectedEvent) {
       return next(new ErrorResponse('Event does not exist', 401));
     }
 
-    await Event.findByIdAndRemove(_id, (error, data) => {
+    await Event.findByIdAndRemove(eventId, (error, data) => {
       if (error) {
         return next(error);
       }
       res.status(200).json({
         success: true,
-        data: `${_id} Deleted.`,
+        data: `${eventId} Deleted.`,
       });
     });
   } catch (error) {
-    // console.log(error);
     next(error);
   }
 };

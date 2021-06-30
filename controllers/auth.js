@@ -16,9 +16,9 @@ exports.register = async (req, res) => {
       password,
     });
 
+    // eslint-disable-next-line no-use-before-define
     sendToken(user, 201, res);
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       info: error.message,
@@ -214,8 +214,10 @@ exports.resetpassword = async (req, res, next) => {
 
 const sendToken = (user, statusCode, res) => {
   const token = user.getSignedToken();
+  const { isAdmin } = user;
   res.status(statusCode).json({
     success: true,
+    isAdmin,
     token,
   });
 };
