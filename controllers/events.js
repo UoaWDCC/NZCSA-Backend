@@ -28,7 +28,7 @@ exports.signUpRSVP = async (req, res, next) => {
     const event = await Event.findOne({ _id: eventId });
 
     if (!event) {
-      return next(new ErrorResponse('Event not found', 401));
+      return next(new ErrorResponse('Event not found', 404));
     }
 
     const lst = event.userList;
@@ -116,7 +116,7 @@ exports.modifyEvent = async (req, res, next) => {
     const selectedEvent = await Event.findById(eventId);
 
     if (!selectedEvent) {
-      return next(new ErrorResponse('Event does not exist', 401));
+      return next(new ErrorResponse('Event does not exist', 404));
     }
 
     // console.log(selectedEvent);
@@ -151,7 +151,7 @@ exports.deleteEvents = async (req, res, next) => {
     const selectedEvent = await Event.findById(eventId);
 
     if (!selectedEvent) {
-      return next(new ErrorResponse('Event does not exist', 401));
+      return next(new ErrorResponse('Event does not exist', 404));
     }
 
     await Event.findByIdAndRemove(eventId, (error, data) => {
