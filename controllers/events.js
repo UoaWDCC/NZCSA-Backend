@@ -28,20 +28,19 @@ exports.signUpRSVP = async (req, res, next) => {
     const event = await Event.findOne({ _id: eventId });
 
     if (!event) {
-      return next(new ErrorResponse('Event not found', 401));
+      return next(new ErrorResponse('Event not found', 404));
     }
 
     const lst = event.userList;
 
     // eslint-disable-next-line no-underscore-dangle
-    if (lst.includes(user._id)) {
+    if (lst.includes(user._id) || user.attendedEvents.includes(user._id)) {
       return next(new ErrorResponse('You have signed this event', 401));
     }
 
     user.attendedEvents.push(eventId);
     // eslint-disable-next-line no-underscore-dangle
     event.userList.push(user._id);
-    console.log(event);
     await event.save();
     await user.save();
     res.status(200).json({
@@ -102,6 +101,44 @@ exports.addEvents = async (req, res, next) => {
   }
 };
 
+exports.modifyEvent = async (req, res, next) => {
+  const {
+    eventId, eventName, eventLocation, eventPrice, eventDescription, startTime, eventImgUrl,
+  } = req.body;
+
+  try {
+    const { isAdmin } = req.user;
+
+    if (!isAdmin) {
+      return next(new ErrorResponse('You are not admin', 401));
+    }
+
+    const selectedEvent = await Event.findById(eventId);
+
+    if (!selectedEvent) {
+      return next(new ErrorResponse('Event does not exist', 404));
+    }
+
+    // console.log(selectedEvent);
+
+    selectedEvent.eventName = eventName;
+    selectedEvent.eventLocation = eventLocation;
+    selectedEvent.eventPrice = eventPrice;
+    selectedEvent.eventDescription = eventDescription;
+    selectedEvent.startTime = startTime;
+    selectedEvent.eventImgUrl = eventImgUrl;
+
+    await selectedEvent.save();
+
+    res.status(200).json({
+      success: true,
+      data: `${eventName} Modified.`,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 exports.deleteEvents = async (req, res, next) => {
   const { eventId } = req.params;
 
@@ -114,7 +151,7 @@ exports.deleteEvents = async (req, res, next) => {
     const selectedEvent = await Event.findById(eventId);
 
     if (!selectedEvent) {
-      return next(new ErrorResponse('Event does not exist', 401));
+      return next(new ErrorResponse('Event does not exist', 404));
     }
 
     await Event.findByIdAndRemove(eventId, (error, data) => {

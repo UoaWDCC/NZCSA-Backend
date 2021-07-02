@@ -47,16 +47,7 @@ const EventSchema = new mongoose.Schema({
   },
 
   userList: [
-    {
-      _id: false,
-      userId: {
-        type: String,
-      },
-      isPaid: {
-        type: Boolean,
-        defualt: false,
-      },
-    },
+    String,
   ],
 
 });
