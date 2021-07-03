@@ -1,9 +1,8 @@
-const User = require('../models/User');
+const User = require("../models/User");
 
 exports.signUpMembership = async (req, res) => {
-  const {
-    gender, university, major, year, faculty, dateofbirth, wechatid,
-  } = req.body;
+  const { gender, university, major, year, faculty, dateofbirth, wechatid } =
+    req.body;
 
   try {
     const { user } = req;
@@ -20,7 +19,7 @@ exports.signUpMembership = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      info: 'infomation completed',
+      info: "infomation completed",
     });
   } catch (error) {
     res.status(500).json({

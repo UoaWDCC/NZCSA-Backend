@@ -1,5 +1,3 @@
 describe("GET endpoint", () => {
-  it("placeholder", async () => {
-    
-  });
+  it("placeholder", async () => {});
 });
