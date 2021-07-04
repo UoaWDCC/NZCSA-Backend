@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const sendEmail = (options) => {
   const transporter = nodemailer.createTransport({
@@ -8,7 +8,7 @@ const sendEmail = (options) => {
       pass: process.env.EMAIL_PASSWORD,
     },
   });
-    // nzcsa202120212021 SendGrid
+  // nzcsa202120212021 SendGrid
   const mailOptions = {
     from: process.env.EMAIL_FROM,
     to: options.to,
@@ -20,7 +20,7 @@ const sendEmail = (options) => {
     if (err) {
       console.log(err);
     } else {
-      console.log('Email sent');
+      console.log("Email sent");
     }
   });
 };

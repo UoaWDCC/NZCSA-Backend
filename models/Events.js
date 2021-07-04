@@ -1,10 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 // const bcrypt = require('bcryptjs');
 // const cryto = require('crypto');
 // const jwt = require('jsonwebtoken');
 
 const EventSchema = new mongoose.Schema({
-
   isActive: {
     type: Boolean,
     default: true,
@@ -17,7 +16,7 @@ const EventSchema = new mongoose.Schema({
   eventName: {
     type: String,
     trim: true,
-    required: 'Event name cannot be blank',
+    required: "Event name cannot be blank",
   },
 
   eventPrice: {
@@ -30,7 +29,7 @@ const EventSchema = new mongoose.Schema({
   eventLocation: {
     type: String,
     trim: true,
-    default: 'TBA',
+    default: "TBA",
   },
 
   eventDescription: {
@@ -46,16 +45,13 @@ const EventSchema = new mongoose.Schema({
     default: () => Date.now() + 7 * 24 * 60 * 60 * 1000,
   },
 
-  userList: [
-    String,
-  ],
-
+  userList: [String],
 });
 
-EventSchema.pre('save', async (next) => {
+EventSchema.pre("save", async (next) => {
   next();
 });
 
-const Events = mongoose.model('Events', EventSchema);
+const Events = mongoose.model("Events", EventSchema);
 
 module.exports = Events;

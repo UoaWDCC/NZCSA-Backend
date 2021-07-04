@@ -1,12 +1,10 @@
-const crypto = require('crypto');
-const User = require('../models/User');
-const ErrorResponse = require('../utils/errorResponse');
-const sendEmail = require('../utils/sendEmail');
+const crypto = require("crypto");
+const User = require("../models/User");
+const ErrorResponse = require("../utils/errorResponse");
+const sendEmail = require("../utils/sendEmail");
 
 exports.register = async (req, res) => {
-  const {
-    firstname, lastname, email, password,
-  } = req.body;
+  const { firstname, lastname, email, password } = req.body;
 
   try {
     const user = await User.create({
@@ -30,20 +28,20 @@ exports.login = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return next(new ErrorResponse('Please provide email and password', 400));
+    return next(new ErrorResponse("Please provide email and password", 400));
   }
 
   try {
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      return next(new ErrorResponse('Email Address does not exist', 401));
+      return next(new ErrorResponse("Email Address does not exist", 401));
     }
 
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
-      return next(new ErrorResponse('Wrong password', 401));
+      return next(new ErrorResponse("Wrong password", 401));
     }
 
     // eslint-disable-next-line no-use-before-define
@@ -61,7 +59,7 @@ exports.forgotpassword = async (req, res, next) => {
 
     if (!user) {
       // console.log("no user found");
-      return next(new ErrorResponse('Email could not be sent', 404));
+      return next(new ErrorResponse("Email could not be sent", 404));
     }
     const resetToken = user.getResetPasswordToken();
 
@@ -161,13 +159,13 @@ exports.forgotpassword = async (req, res, next) => {
     try {
       await sendEmail({
         to: user.email,
-        subject: 'Password reset request',
+        subject: "Password reset request",
         text: message,
       });
 
       res.status(200).json({
         success: true,
-        info: 'Email sent',
+        info: "Email sent",
       });
     } catch (error) {
       user.resetPasswordToken = undefined;
@@ -175,7 +173,7 @@ exports.forgotpassword = async (req, res, next) => {
 
       await user.save();
       // console.log(error);
-      return next(new ErrorResponse('Email could not be sent', 404));
+      return next(new ErrorResponse("Email could not be sent", 404));
     }
   } catch (error) {
     next(error);
@@ -184,7 +182,10 @@ exports.forgotpassword = async (req, res, next) => {
 
 exports.resetpassword = async (req, res, next) => {
   //   console.log('Before: ', req.params.resetToken);
-  const resetPasswordToken = crypto.createHash('sha256').update(req.params.resetToken).digest('hex');
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.resetToken)
+    .digest("hex");
   //   console.log('After', resetPasswordToken);
   // console.log(Date.now());
 
@@ -194,7 +195,7 @@ exports.resetpassword = async (req, res, next) => {
       resetPasswordExpire: { $gt: Date.now() },
     });
     if (!user) {
-      return next(new ErrorResponse('Invaild Reset Token', 400));
+      return next(new ErrorResponse("Invaild Reset Token", 400));
     }
 
     user.password = req.body.password;
@@ -205,7 +206,7 @@ exports.resetpassword = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      info: 'Password reset success',
+      info: "Password reset success",
     });
   } catch (error) {
     next(error);
