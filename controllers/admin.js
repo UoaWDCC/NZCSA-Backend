@@ -4,20 +4,17 @@ const ErrorResponse = require("../utils/errorResponse");
 
 exports.shwoEventUserInfo = async (req, res, next) => {
   const { eventId } = req.body;
+  let userInfo = [];
   try {
-    const { isAdmin } = req.user;
-
-    if (!isAdmin) {
-      return next(new ErrorResponse("You are not admin", 401));
-    }
     const event = await Event.findOne({ _id: eventId });
-
     if (!event) {
       return next(new ErrorResponse("Event not found", 401));
     }
-
-    console.log(event);
-    res.send(event.userList);
+    for (let i = 0; i < event.userList.length; i++) {
+      const user = await User.findOne({ _id: event.userList[i] });
+      userInfo.push(user);
+    }
+    res.send(userInfo);
   } catch (e) {
     next(e);
   }
@@ -25,10 +22,6 @@ exports.shwoEventUserInfo = async (req, res, next) => {
 
 exports.showMemberList = async (req, res, next) => {
   try {
-    const { isAdmin } = req.user;
-    if (!isAdmin) {
-      return next(new ErrorResponse("You are not admin", 401));
-    }
     await User.find({}, (error, users) => {
       const userMap = [];
       users.forEach((user) => {
@@ -45,12 +38,6 @@ exports.promoToMember = async (req, res, next) => {
   const { userId } = req.body;
 
   try {
-    const { isAdmin } = req.user;
-
-    if (!isAdmin) {
-      return next(new ErrorResponse("You are not admin", 401));
-    }
-
     const user = await User.findOne({ _id: userId });
 
     if (!user) {
@@ -78,12 +65,6 @@ exports.deleteMember = async (req, res, next) => {
   const { userId } = req.params;
 
   try {
-    const { isAdmin } = req.user;
-
-    if (!isAdmin) {
-      return next(new ErrorResponse("You are not admin", 401));
-    }
-
     const user = await User.findOne({ _id: userId });
 
     if (!user) {
