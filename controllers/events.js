@@ -1,5 +1,5 @@
-const Event = require('../models/Events');
-const ErrorResponse = require('../utils/errorResponse');
+const Event = require("../models/Events");
+const ErrorResponse = require("../utils/errorResponse");
 
 // Normal User API functions:
 exports.getEvents = async (req, res) => {
@@ -28,14 +28,14 @@ exports.signUpRSVP = async (req, res, next) => {
     const event = await Event.findOne({ _id: eventId });
 
     if (!event) {
-      return next(new ErrorResponse('Event not found', 404));
+      return next(new ErrorResponse("Event not found", 404));
     }
 
     const lst = event.userList;
 
     // eslint-disable-next-line no-underscore-dangle
     if (lst.includes(user._id) || user.attendedEvents.includes(user._id)) {
-      return next(new ErrorResponse('You have signed this event', 401));
+      return next(new ErrorResponse("You have signed this event", 401));
     }
 
     user.attendedEvents.push(eventId);
@@ -79,18 +79,22 @@ exports.signUpRSVP = async (req, res, next) => {
 // Admin User API Functions:
 exports.addEvents = async (req, res, next) => {
   const {
-    eventName, eventLocation, eventPrice, eventDescription, startTime, eventImgUrl,
+    eventName,
+    eventLocation,
+    eventPrice,
+    eventDescription,
+    startTime,
+    eventImgUrl,
   } = req.body;
 
   try {
-    const { isAdmin } = req.user;
-
-    if (!isAdmin) {
-      return next(new ErrorResponse('You are not admin', 401));
-    }
-
     await Event.create({
-      eventName, eventLocation, eventPrice, eventDescription, startTime, eventImgUrl,
+      eventName,
+      eventLocation,
+      eventPrice,
+      eventDescription,
+      startTime,
+      eventImgUrl,
     });
     res.status(200).json({
       success: true,
@@ -103,20 +107,20 @@ exports.addEvents = async (req, res, next) => {
 
 exports.modifyEvent = async (req, res, next) => {
   const {
-    eventId, eventName, eventLocation, eventPrice, eventDescription, startTime, eventImgUrl,
+    eventId,
+    eventName,
+    eventLocation,
+    eventPrice,
+    eventDescription,
+    startTime,
+    eventImgUrl,
   } = req.body;
 
   try {
-    const { isAdmin } = req.user;
-
-    if (!isAdmin) {
-      return next(new ErrorResponse('You are not admin', 401));
-    }
-
     const selectedEvent = await Event.findById(eventId);
 
     if (!selectedEvent) {
-      return next(new ErrorResponse('Event does not exist', 404));
+      return next(new ErrorResponse("Event does not exist", 404));
     }
 
     // console.log(selectedEvent);
@@ -143,15 +147,10 @@ exports.deleteEvents = async (req, res, next) => {
   const { eventId } = req.params;
 
   try {
-    const { isAdmin } = req.user;
-
-    if (!isAdmin) {
-      return next(new ErrorResponse('You are not admin', 401));
-    }
     const selectedEvent = await Event.findById(eventId);
 
     if (!selectedEvent) {
-      return next(new ErrorResponse('Event does not exist', 404));
+      return next(new ErrorResponse("Event does not exist", 404));
     }
 
     await Event.findByIdAndRemove(eventId, (error, data) => {
