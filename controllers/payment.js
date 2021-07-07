@@ -1,4 +1,4 @@
-
+const axios = require('axios');
 
 exports.makePayment = async(req, res) => {
 
@@ -17,12 +17,10 @@ exports.makePayment = async(req, res) => {
     }
 
     try {
-        
+        const response = await axios.post('https://api.latipay.net/v2/transaction', body)
 
-        res.status(200).json({
-            success: true,
-            info: "payment success",
-        })
+        res.status(200).send(response.data);
+
     } catch (error) {
         res.status(200).json({
             success: false,
