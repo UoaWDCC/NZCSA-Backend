@@ -22,7 +22,9 @@ router
   .route("/delete-events/:eventId")
   .delete(protect, checkAdmin, deleteEvents);
 
-router.route("/show-event-user-info").get(protect,checkAdmin, shwoEventUserInfo);
+router
+  .route("/show-event-user-info")
+  .post(protect, checkAdmin, shwoEventUserInfo);
 router.route("/show-member-list").get(protect, checkAdmin, showMemberList);
 router.route("/promo-to-member").post(protect, checkAdmin, promoToMember);
 router

@@ -1,3 +1,5 @@
+const ErrorResponse = require("../utils/errorResponse");
+
 module.exports.checkAdmin = (req, res, next) => {
   try {
     const { isAdmin } = req.user;

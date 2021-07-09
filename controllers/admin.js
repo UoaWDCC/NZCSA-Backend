@@ -2,18 +2,25 @@ const User = require("../models/User");
 const Event = require("../models/Events");
 const ErrorResponse = require("../utils/errorResponse");
 
+async function findUsers(_id) {
+  const user = await User.findOne({ _id });
+  return user;
+}
+
 exports.shwoEventUserInfo = async (req, res, next) => {
   const { eventId } = req.body;
-  let userInfo = [];
+  const results = [];
+  const userInfo = [];
   try {
     const event = await Event.findOne({ _id: eventId });
     if (!event) {
       return next(new ErrorResponse("Event not found", 401));
     }
-    for (let i = 0; i < event.userList.length; i++) {
-      const user = await User.findOne({ _id: event.userList[i] });
-      userInfo.push(user);
+    for (let i = 0; i < event.userList.length; i += 1) {
+      results.push(findUsers(event.userList[i]));
     }
+    const userInfoPromise = await Promise.all(results);
+    userInfoPromise.map((user) => (user != null ? userInfo.push(user) : ""));
     res.send(userInfo);
   } catch (e) {
     next(e);
