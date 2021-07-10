@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { v4: uuidv4 } = require("uuid");
 const getSignature = require("../utils/getSignature");
 const ErrorResponse = require("../utils/errorResponse");
 
@@ -14,7 +15,7 @@ exports.makePayment = async (req, res, next) => {
     payment_method: paymentMethod,
     return_url: "https://merchantsite.com/checkout",
     callback_url: "https://merchantsite.com/confirm",
-    merchant_reference: "dsi39ej430sks03",
+    merchant_reference: uuidv4(),
     ip: "122.122.122.1",
     version: "2.0",
     product_name: "NZCSA Membership",
@@ -22,7 +23,7 @@ exports.makePayment = async (req, res, next) => {
 
   const hash = getSignature(body);
   body.signature = hash;
-  // console.log(hash)
+  // console.log(body)
 
   try {
     const response = await axios.post(
