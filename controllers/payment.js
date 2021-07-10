@@ -1,34 +1,40 @@
 const axios = require("axios");
+const getSignature = require("../utils/getSignature");
+const ErrorResponse = require("../utils/errorResponse");
 
-exports.makePayment = async (req, res) => {
-  const { paymentMethod } = req;
+exports.makePayment = async (req, res, next) => {
+  const { paymentMethod, paymentAmount } = req.body;
+  const userId = process.env.LATIPAY_USER_ID;
+  const walletId = process.env.LATIPAY_WALLET_ID;
 
   const body = {
-    user_id: "U000004218",
-    wallet_id: "W000045674",
-    amount: "1.00",
+    user_id: userId,
+    wallet_id: walletId,
+    amount: paymentAmount,
     payment_method: paymentMethod,
     return_url: "https://merchantsite.com/checkout",
     callback_url: "https://merchantsite.com/confirm",
     merchant_reference: "dsi39ej430sks03",
     ip: "122.122.122.1",
     version: "2.0",
-    product_name: "Pinot Noir, Otago",
-    signature:
-      "5fdd558530ff94f19332d17775fb13f1149d13a6cbd90a2054882a3320a2b4d3",
+    product_name: "NZCSA Membership",
   };
+
+  const hash = getSignature(body);
+  body.signature = hash;
+  // console.log(hash)
 
   try {
     const response = await axios.post(
       "https://api.latipay.net/v2/transaction",
       body
     );
-
-    res.status(200).json(response);
+    if (response.data.code === 0) {
+      res.send(response.data);
+    } else {
+      return next(new ErrorResponse(response.data.message, response.data.code));
+    }
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      info: error,
-    });
+    next(error);
   }
 };
