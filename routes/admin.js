@@ -4,6 +4,7 @@ const {
   promoToMember,
   deleteMember,
   shwoEventUserInfo,
+  removeMembership,
 } = require("../controllers/admin");
 const {
   addEvents,
@@ -22,6 +23,7 @@ router.route("/delete-events/:eventId").delete(protect, deleteEvents);
 router.route("/show-event-user-info").get(protect, shwoEventUserInfo);
 router.route("/show-member-list").get(protect, showMemberList);
 router.route("/promo-to-member").post(protect, promoToMember);
+router.route("/remove-membership").post(protect, removeMembership);
 router.route("/delete-member/:userId").delete(protect, deleteMember);
 
 module.exports = router;

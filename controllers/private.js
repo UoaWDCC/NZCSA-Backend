@@ -32,6 +32,11 @@ exports.signUpMembership = async (req, res) => {
 exports.getPrivateData = (req, res, next) => {
   const { username } = req.user;
 
+  // const { user } = req;
+  // user.isMembership = false;
+
+  // user.save();
+
   res.status(200).json({
     success: true,
     data: req.user,
