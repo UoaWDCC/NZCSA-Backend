@@ -4,6 +4,7 @@ const OrderSchema = new mongoose.Schema({
   merchantReference: {
     type: String,
     required: [true, "There must be reference for order"],
+    unique: true,
   },
 
   userId: {

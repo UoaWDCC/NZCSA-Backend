@@ -10,6 +10,16 @@ exports.createOrder = async (req, res, next) => {
   const { merchantReference, userId, paymentMethod } = req.body;
   console.log(req.body);
 
+  // await Orders.deleteMany({});
+
+  // await Orders.find({}, (error, events) => {
+  //   const eventMap = {};
+  //   events.forEach((event) => {
+  //     eventMap[event._id] = event;
+  //   });
+  //   res.send(eventMap);
+  // });
+
   try {
     await Orders.create({
       merchantReference,
