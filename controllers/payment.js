@@ -3,10 +3,32 @@ const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
 const getSignature = require("../utils/getSignature");
 const ErrorResponse = require("../utils/errorResponse");
+const Orders = require("../models/Orders");
+const Users = require("../models/User");
+
+exports.createOrder = async (req, res, next) => {
+  const { merchantReference, userId, paymentMethod } = req.body;
+  console.log(req.body);
+
+  try {
+    await Orders.create({
+      merchantReference,
+      userId,
+      orderStatus: false,
+      paymentMethod,
+    });
+    res.status(200).json({
+      success: true,
+      data: `order ${merchantReference} added`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.makePayment = async (req, res, next) => {
-  const { paymentMethod, paymentAmount } = req.body;
-  const userId = process.env.LATIPAY_USER_ID;
+  const { paymentMethod, paymentAmount, userId } = req.body;
+  const latipayUserId = process.env.LATIPAY_USER_ID;
   const walletId = process.env.LATIPAY_WALLET_ID;
   const serverUrl = process.env.PAYMENT_TEST_SERVER;
   const clientUrl = process.env.PAYMENT_TEST_CLIENT;
@@ -20,7 +42,7 @@ exports.makePayment = async (req, res, next) => {
   }
 
   const body = {
-    user_id: userId,
+    user_id: latipayUserId,
     wallet_id: walletId,
     amount: paymentAmount,
     payment_method: paymentMethod,
@@ -57,6 +79,10 @@ exports.makePayment = async (req, res, next) => {
         const { data } = response;
         data.payment_url = `${host_url}/${nonce}`;
 
+        // Add to orders collection
+        // await Orders.create({
+        // })
+
         res.status(200).json({
           success: true,
           data: response.data,
@@ -90,22 +116,35 @@ exports.paymentNotification = (req, res) => {
     merchant_reference + payment_method + status + currency + amount;
 
   const validateHash = getSignature(message, false);
-  // console.log(validateHash);
-  // console.log(signature);
+  console.log(validateHash);
+  console.log(signature);
 
-  if (signature === validateHash) {
-    console.log(
-      "signature validation successful, calling promote to member api"
-    );
+  if (signature === validateHash && status === "paid") {
+    console.log("signature validation successful, making the user a member");
+
+    try {
+      const order = Orders.findOne({ merchantReference: merchant_reference });
+
+      if (!order) {
+        console.log("order not found");
+      }
+
+      const { userId } = order;
+      const user = Users.findOne({ _id: userId });
+
+      user.isMembership = true;
+      user.save();
+      order.orderStatus = "paid";
+      order.save();
+    } catch (error) {
+      console.log(error);
+    }
   } else {
-    console.log("signature validation failed");
-    return res.status(400).send("signature validation failed");
+    console.log("signature validation failed or order is not paid");
+    // return res.status(400).send("signature validation failed");
   }
 
-  // return res.status(200).send("sent");
-  return res.json({
-    sent: "sent",
-  });
+  return res.status(200).send("sent");
 };
 
 // Sample response for payment notification webhook
