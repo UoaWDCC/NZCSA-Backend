@@ -52,30 +52,6 @@ exports.signUpRSVP = async (req, res, next) => {
   }
 };
 
-// exports.cancelEvents = async (req, res, next) => {
-//   const { eventId } = req.body;
-
-//   try {
-//     const { user } = req;
-
-//     const lst = user.attendedEvents;
-
-//     if (!lst.includes(eventId)) {
-//       return next(new ErrorResponse('You have not signed this event', 401));
-//     }
-
-//     user.attendedEvents.push(eventId);
-
-//     await user.save();
-//     res.status(200).json({
-//       success: true,
-//       data: `event ${eventId} Added.`,
-//     });
-//   } catch (e) {
-//     next(e);
-//   }
-// };
-
 // Admin User API Functions:
 exports.addEvents = async (req, res, next) => {
   const {
@@ -85,6 +61,7 @@ exports.addEvents = async (req, res, next) => {
     eventDescription,
     startTime,
     eventImgUrl,
+    wechatImgUrl,
   } = req.body;
 
   try {
@@ -95,6 +72,7 @@ exports.addEvents = async (req, res, next) => {
       eventDescription,
       startTime,
       eventImgUrl,
+      wechatImgUrl,
     });
     res.status(200).json({
       success: true,
@@ -114,6 +92,7 @@ exports.modifyEvent = async (req, res, next) => {
     eventDescription,
     startTime,
     eventImgUrl,
+    wechatImgUrl,
   } = req.body;
 
   try {
@@ -131,6 +110,7 @@ exports.modifyEvent = async (req, res, next) => {
     selectedEvent.eventDescription = eventDescription;
     selectedEvent.startTime = startTime;
     selectedEvent.eventImgUrl = eventImgUrl;
+    selectedEvent.wechatImgUrl = wechatImgUrl;
 
     await selectedEvent.save();
 
