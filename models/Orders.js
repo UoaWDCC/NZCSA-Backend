@@ -23,6 +23,10 @@ const OrderSchema = new mongoose.Schema({
   },
 });
 
+OrderSchema.pre("save", async (next) => {
+  next();
+});
+
 const Orders = mongoose.model("Orders", OrderSchema);
 
 module.exports = Orders;

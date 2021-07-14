@@ -6,11 +6,30 @@ const ErrorResponse = require("../utils/errorResponse");
 const Orders = require("../models/Orders");
 const Users = require("../models/User");
 
+exports.getOrder = async (req, res) => {
+  const merchantReference = req.body;
+
+  try {
+    await Orders.find({}, (error, events) => {
+      const eventMap = {};
+      events.forEach((event) => {
+        eventMap[event._id] = event;
+      });
+      res.send(eventMap);
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      info: error.message,
+    });
+  }
+};
+
 exports.createOrder = async (req, res, next) => {
   const { merchantReference, userId, paymentMethod } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
 
-  // await Orders.deleteMany({});
+  // Orders.deleteMany({});
 
   // await Orders.find({}, (error, events) => {
   //   const eventMap = {};
@@ -23,15 +42,16 @@ exports.createOrder = async (req, res, next) => {
   try {
     await Orders.create({
       merchantReference,
-      userId,
-      orderStatus: false,
+      orderStatus: "unpaid",
       paymentMethod,
+      userId,
     });
     res.status(200).json({
       success: true,
       data: `order ${merchantReference} added`,
     });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
@@ -51,6 +71,8 @@ exports.makePayment = async (req, res, next) => {
     return next(new ErrorResponse("Invalid payment amount", 400));
   }
 
+  const merchantReference = uuidv4();
+
   const body = {
     user_id: latipayUserId,
     wallet_id: walletId,
@@ -58,7 +80,7 @@ exports.makePayment = async (req, res, next) => {
     payment_method: paymentMethod,
     return_url: `${clientUrl}/checkout`,
     callback_url: `${serverUrl}/api/payment/payment-update`,
-    merchant_reference: uuidv4(),
+    merchant_reference: merchantReference,
     ip: "122.122.122.1",
     version: "2.0",
     product_name: "NZCSA Membership",
@@ -87,7 +109,7 @@ exports.makePayment = async (req, res, next) => {
       // console.log(validateHash);
       if (signature === validateHash) {
         const { data } = response;
-        data.payment_url = `${host_url}/${nonce}`;
+        const payment_url = `${host_url}/${nonce}`;
 
         // Add to orders collection
         // await Orders.create({
@@ -95,7 +117,9 @@ exports.makePayment = async (req, res, next) => {
 
         res.status(200).json({
           success: true,
-          data: response.data,
+          data,
+          payment_url,
+          merchantReference,
         });
       } else {
         return next(new ErrorResponse("Signature Validation failed", 400));
@@ -108,7 +132,7 @@ exports.makePayment = async (req, res, next) => {
   }
 };
 
-exports.paymentNotification = (req, res) => {
+exports.paymentNotification = async (req, res) => {
   const { body } = req;
   console.log(body);
 
@@ -126,21 +150,26 @@ exports.paymentNotification = (req, res) => {
     merchant_reference + payment_method + status + currency + amount;
 
   const validateHash = getSignature(message, false);
-  console.log(validateHash);
-  console.log(signature);
+  // console.log(validateHash);
+  // console.log(signature);
 
   if (signature === validateHash && status === "paid") {
     console.log("signature validation successful, making the user a member");
 
     try {
-      const order = Orders.findOne({ merchantReference: merchant_reference });
+      const order = await Orders.findOne({
+        merchantReference: merchant_reference,
+      });
 
       if (!order) {
         console.log("order not found");
       }
 
       const { userId } = order;
-      const user = Users.findOne({ _id: userId });
+      const user = await Users.findOne({ _id: userId });
+
+      console.log(user);
+      console.log(order);
 
       user.isMembership = true;
       user.save();
