@@ -9,7 +9,8 @@ const errorHandler = require("./middleware/error");
 connectDB();
 const app = express();
 
-app.use(express.json());
+app.use(express.json()); // support json encoded boies
+app.use(express.urlencoded({ extended: true })); // support encoded bodies
 app.use(cors());
 // redirect to auth routes
 app.use("/api/auth", require("./routes/auth"));

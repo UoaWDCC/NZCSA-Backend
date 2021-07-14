@@ -68,6 +68,39 @@ exports.promoToMember = async (req, res, next) => {
   }
 };
 
+exports.removeMembership = async (req, res, next) => {
+  const { userId } = req.body;
+
+  try {
+    const { isAdmin } = req.user;
+
+    if (!isAdmin) {
+      return next(new ErrorResponse("You are not admin", 401));
+    }
+
+    const user = await User.findOne({ _id: userId });
+
+    if (!user) {
+      return next(new ErrorResponse("User not found", 400));
+    }
+
+    if (user.isMembership) {
+      return next(new ErrorResponse("User is already a member", 400));
+    }
+
+    user.isMembership = true;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      info: `${userId} has been promoted to membership`,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 exports.deleteMember = async (req, res, next) => {
   const { userId } = req.params;
 
