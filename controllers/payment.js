@@ -26,7 +26,8 @@ exports.getOrder = async (req, res) => {
 };
 
 exports.createOrder = async (req, res, next) => {
-  const { merchantReference, userId, paymentMethod } = req.body;
+  const { merchantReference, userId, paymentMethod, eventId, orderType } =
+    req.body;
   // console.log(req.body);
 
   // Orders.deleteMany({});
@@ -42,9 +43,11 @@ exports.createOrder = async (req, res, next) => {
   try {
     await Orders.create({
       merchantReference,
-      orderStatus: "unpaid",
+      orderStatus: "pending",
       paymentMethod,
       userId,
+      eventId,
+      orderType,
     });
     res.status(200).json({
       success: true,
@@ -57,7 +60,7 @@ exports.createOrder = async (req, res, next) => {
 };
 
 exports.makePayment = async (req, res, next) => {
-  const { paymentMethod, paymentAmount, userId } = req.body;
+  const { paymentMethod, paymentAmount, productName } = req.body;
   const latipayUserId = process.env.LATIPAY_USER_ID;
   const walletId = process.env.LATIPAY_WALLET_ID;
   const serverUrl = process.env.PAYMENT_TEST_SERVER;
@@ -83,7 +86,7 @@ exports.makePayment = async (req, res, next) => {
     merchant_reference: merchantReference,
     ip: "122.122.122.1",
     version: "2.0",
-    product_name: "NZCSA Membership",
+    product_name: productName,
   };
 
   if (paymentMethod === "wechat") {
@@ -143,6 +146,7 @@ exports.paymentNotification = async (req, res) => {
     currency,
     amount,
     signature,
+    pay_time,
   } = req.body;
   // console.log(status);
 
@@ -154,7 +158,7 @@ exports.paymentNotification = async (req, res) => {
   // console.log(signature);
 
   if (signature === validateHash && status === "paid") {
-    console.log("signature validation successful, making the user a member");
+    console.log("signature validation successful");
 
     try {
       const order = await Orders.findOne({
@@ -165,16 +169,29 @@ exports.paymentNotification = async (req, res) => {
         console.log("order not found");
       }
 
-      const { userId } = order;
+      const { userId, eventId, orderType } = order;
       const user = await Users.findOne({ _id: userId });
 
-      console.log(user);
-      console.log(order);
+      if (orderType === "membership") {
+        console.log(user);
+        console.log(order);
 
-      user.isMembership = true;
-      user.save();
-      order.orderStatus = "paid";
-      order.save();
+        user.isMembership = true;
+        user.save();
+        order.orderStatus = status;
+        order.payTime = pay_time;
+        order.save();
+        console.log(`membership added to ${userId}`);
+      } else if (orderType === "event") {
+        const event = await Event.findOne({ _id: eventId });
+        user.attendedEvents.push(eventId);
+        event.userList.push(user._id);
+        await event.save();
+        await user.save();
+        console.log(`event ${eventId} Added.`);
+      } else {
+        console.log("invalid order type");
+      }
     } catch (error) {
       console.log(error);
     }
