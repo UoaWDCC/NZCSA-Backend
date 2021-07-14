@@ -85,6 +85,7 @@ exports.addEvents = async (req, res, next) => {
     eventDescription,
     startTime,
     eventImgUrl,
+    wechatImgUrl,
   } = req.body;
 
   try {
@@ -95,6 +96,7 @@ exports.addEvents = async (req, res, next) => {
       eventDescription,
       startTime,
       eventImgUrl,
+      wechatImgUrl,
     });
     res.status(200).json({
       success: true,
@@ -114,6 +116,7 @@ exports.modifyEvent = async (req, res, next) => {
     eventDescription,
     startTime,
     eventImgUrl,
+    wechatImgUrl,
   } = req.body;
 
   try {
@@ -131,6 +134,7 @@ exports.modifyEvent = async (req, res, next) => {
     selectedEvent.eventDescription = eventDescription;
     selectedEvent.startTime = startTime;
     selectedEvent.eventImgUrl = eventImgUrl;
+    selectedEvent.wechatImgUrl = wechatImgUrl;
 
     await selectedEvent.save();
 
