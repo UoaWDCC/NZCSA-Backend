@@ -9,12 +9,14 @@ const errorHandler = require("./middleware/error");
 connectDB();
 const app = express();
 
-app.use(express.json());
+app.use(express.json()); // support json encoded boies
+app.use(express.urlencoded({ extended: true })); // support encoded bodies
 app.use(cors());
 // redirect to auth routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/private", require("./routes/private"));
 app.use("/api/admin", require("./routes/admin"));
+app.use("/api/payment", require("./routes/payment"));
 
 // Error Handler (last piece of middleware)
 app.use(errorHandler);
