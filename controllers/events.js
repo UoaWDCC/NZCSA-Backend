@@ -88,12 +88,6 @@ exports.addEvents = async (req, res, next) => {
   } = req.body;
 
   try {
-    const { isAdmin } = req.user;
-
-    if (!isAdmin) {
-      return next(new ErrorResponse("You are not admin", 401));
-    }
-
     await Event.create({
       eventName,
       eventLocation,
@@ -123,12 +117,6 @@ exports.modifyEvent = async (req, res, next) => {
   } = req.body;
 
   try {
-    const { isAdmin } = req.user;
-
-    if (!isAdmin) {
-      return next(new ErrorResponse("You are not admin", 401));
-    }
-
     const selectedEvent = await Event.findById(eventId);
 
     if (!selectedEvent) {
@@ -159,11 +147,6 @@ exports.deleteEvents = async (req, res, next) => {
   const { eventId } = req.params;
 
   try {
-    const { isAdmin } = req.user;
-
-    if (!isAdmin) {
-      return next(new ErrorResponse("You are not admin", 401));
-    }
     const selectedEvent = await Event.findById(eventId);
 
     if (!selectedEvent) {

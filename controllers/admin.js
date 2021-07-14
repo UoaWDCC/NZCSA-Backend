@@ -2,22 +2,26 @@ const User = require("../models/User");
 const Event = require("../models/Events");
 const ErrorResponse = require("../utils/errorResponse");
 
+async function findUsers(_id) {
+  const user = await User.findOne({ _id });
+  return user;
+}
+
 exports.shwoEventUserInfo = async (req, res, next) => {
   const { eventId } = req.body;
+  const results = [];
+  const userInfo = [];
   try {
-    const { isAdmin } = req.user;
-
-    if (!isAdmin) {
-      return next(new ErrorResponse("You are not admin", 401));
-    }
     const event = await Event.findOne({ _id: eventId });
-
     if (!event) {
       return next(new ErrorResponse("Event not found", 401));
     }
-
-    console.log(event);
-    res.send(event.userList);
+    for (let i = 0; i < event.userList.length; i += 1) {
+      results.push(findUsers(event.userList[i]));
+    }
+    const userInfoPromise = await Promise.all(results);
+    userInfoPromise.map((user) => (user != null ? userInfo.push(user) : ""));
+    res.send(userInfo);
   } catch (e) {
     next(e);
   }
@@ -25,10 +29,6 @@ exports.shwoEventUserInfo = async (req, res, next) => {
 
 exports.showMemberList = async (req, res, next) => {
   try {
-    const { isAdmin } = req.user;
-    if (!isAdmin) {
-      return next(new ErrorResponse("You are not admin", 401));
-    }
     await User.find({}, (error, users) => {
       const userMap = [];
       users.forEach((user) => {
@@ -45,12 +45,6 @@ exports.promoToMember = async (req, res, next) => {
   const { userId } = req.body;
 
   try {
-    const { isAdmin } = req.user;
-
-    if (!isAdmin) {
-      return next(new ErrorResponse("You are not admin", 401));
-    }
-
     const user = await User.findOne({ _id: userId });
 
     if (!user) {
@@ -111,12 +105,6 @@ exports.deleteMember = async (req, res, next) => {
   const { userId } = req.params;
 
   try {
-    const { isAdmin } = req.user;
-
-    if (!isAdmin) {
-      return next(new ErrorResponse("You are not admin", 401));
-    }
-
     const user = await User.findOne({ _id: userId });
 
     if (!user) {
