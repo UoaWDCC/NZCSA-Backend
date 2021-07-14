@@ -9,6 +9,8 @@ const Users = require("../models/User");
 exports.getOrder = async (req, res) => {
   const merchantReference = req.body;
 
+  // await Orders.deleteMany({});
+
   try {
     await Orders.find({}, (error, events) => {
       const eventMap = {};
@@ -29,16 +31,6 @@ exports.createOrder = async (req, res, next) => {
   const { merchantReference, userId, paymentMethod, eventId, orderType } =
     req.body;
   // console.log(req.body);
-
-  // Orders.deleteMany({});
-
-  // await Orders.find({}, (error, events) => {
-  //   const eventMap = {};
-  //   events.forEach((event) => {
-  //     eventMap[event._id] = event;
-  //   });
-  //   res.send(eventMap);
-  // });
 
   try {
     await Orders.create({
@@ -172,7 +164,7 @@ exports.paymentNotification = async (req, res) => {
       const { userId, eventId, orderType } = order;
       const user = await Users.findOne({ _id: userId });
 
-      if (orderType === "membership") {
+      if (orderType === "membership-payment") {
         console.log(user);
         console.log(order);
 
@@ -182,7 +174,7 @@ exports.paymentNotification = async (req, res) => {
         order.payTime = pay_time;
         order.save();
         console.log(`membership added to ${userId}`);
-      } else if (orderType === "event") {
+      } else if (orderType === "event-payment") {
         const event = await Event.findOne({ _id: eventId });
         user.attendedEvents.push(eventId);
         event.userList.push(user._id);
