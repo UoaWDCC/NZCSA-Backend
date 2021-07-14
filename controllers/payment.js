@@ -99,6 +99,7 @@ exports.makePayment = async (req, res, next) => {
       "https://api.latipay.net/v2/transaction",
       body
     );
+
     // console.log(response.data)
     if (response.data.code === 0) {
       const { nonce, host_url, signature } = response.data;
@@ -124,6 +125,10 @@ exports.makePayment = async (req, res, next) => {
         return next(new ErrorResponse("Signature Validation failed", 400));
       }
     } else {
+      return next(new ErrorResponse(response.data.message, response.data.code));
+    }
+  } catch (error) {
+    next(error);
   }
 };
 
