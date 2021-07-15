@@ -8,7 +8,7 @@ async function findUsers(_id) {
 }
 
 exports.showEventUserInfo = async (req, res, next) => {
-  const { eventId } = req.body;
+  const { eventId } = req.params;
   const results = [];
   const userInfo = [];
   try {
