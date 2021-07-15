@@ -24,7 +24,7 @@ router
   .delete(protect, checkAdmin, deleteEvents);
 
 router
-  .route("/show-event-user-info")
+  .route("/show-event-user-info/:eventId")
   .get(protect, checkAdmin, showEventUserInfo);
 router.route("/show-member-list").get(protect, checkAdmin, showMemberList);
 router.route("/promo-to-member").post(protect, checkAdmin, promoToMember);
