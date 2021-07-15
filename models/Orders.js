@@ -22,6 +22,11 @@ const OrderSchema = new mongoose.Schema({
     required: [true, "please provide payment method"],
   },
 
+  orderType: {
+    type: String,
+    required: [true, "There must be order type"],
+  },
+
   eventId: {
     type: String,
   },
@@ -30,7 +35,7 @@ const OrderSchema = new mongoose.Schema({
     type: String,
   },
 
-  orderType: {
+  amount: {
     type: String,
   },
 });

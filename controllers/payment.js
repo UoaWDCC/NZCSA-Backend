@@ -141,18 +141,24 @@ exports.paymentNotification = async (req, res) => {
   // console.log(validateHash);
   // console.log(signature);
 
-  if (signature === validateHash && status === "paid") {
+  if (signature !== validateHash) {
+    // validate if message came from Latipay server
     console.log("signature validation successful");
+    return res.status(400).send("signature validation failed");
+  }
 
+  const order = await Orders.findOne({
+    merchantReference: merchant_reference,
+  });
+
+  if (!order) {
+    console.log("order not found");
+    return res.status(404).send("order not found");
+  }
+
+  if (status === "paid") {
+    // Only dispatch order if transaction is successfully processed to bank account
     try {
-      const order = await Orders.findOne({
-        merchantReference: merchant_reference,
-      });
-
-      if (!order) {
-        console.log("order not found");
-      }
-
       const { userId, eventId, orderType } = order;
       const user = await Users.findOne({ _id: userId });
 
@@ -177,19 +183,16 @@ exports.paymentNotification = async (req, res) => {
       } else {
         console.log("invalid order type");
       }
-
-      // executes regardless of outcome to update order
-      order.amount = amount;
-      order.orderStatus = status;
-      order.payTime = pay_time;
-      order.save();
     } catch (error) {
       console.log(error);
     }
-  } else {
-    console.log("signature validation failed or order is not paid");
-    // return res.status(400).send("signature validation failed");
   }
+
+  // executes regardless of outcome to update order
+  order.amount = amount;
+  order.orderStatus = status;
+  order.payTime = pay_time;
+  order.save();
 
   return res.status(200).send("sent");
 };
