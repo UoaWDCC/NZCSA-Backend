@@ -40,9 +40,10 @@ const EventSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  endTime: {
-    type: Date,
-    default: () => Date.now() + 7 * 24 * 60 * 60 * 1000,
+
+  wechatImgUrl: {
+    type: String,
+    trim: true,
   },
 
   userList: [String],
