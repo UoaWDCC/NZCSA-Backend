@@ -125,7 +125,7 @@ exports.modifyEvent = async (req, res, next) => {
 
 exports.deleteEvents = async (req, res, next) => {
   const { eventId } = req.params;
-
+  console.log(eventId);
   try {
     const selectedEvent = await Event.findById(eventId);
 
@@ -133,15 +133,19 @@ exports.deleteEvents = async (req, res, next) => {
       return next(new ErrorResponse("Event does not exist", 404));
     }
 
-    await Event.findByIdAndRemove(eventId, (error, data) => {
-      if (error) {
-        return next(error);
+    await Event.findByIdAndUpdate(
+      eventId,
+      { isActive: false },
+      (error, data) => {
+        if (error) {
+          return next(error);
+        }
+        res.status(200).json({
+          success: true,
+          data: `${eventId} archive.`,
+        });
       }
-      res.status(200).json({
-        success: true,
-        data: `${eventId} Deleted.`,
-      });
-    });
+    );
   } catch (error) {
     next(error);
   }
