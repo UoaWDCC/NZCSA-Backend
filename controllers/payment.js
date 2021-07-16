@@ -5,46 +5,31 @@ const getSignature = require("../utils/getSignature");
 const ErrorResponse = require("../utils/errorResponse");
 const Orders = require("../models/Orders");
 const Users = require("../models/User");
+const Event = require("../models/Events");
 
-exports.getOrder = async (req, res) => {
-  const merchantReference = req.body;
+// Api functions for use in production by user
 
-  try {
-    await Orders.find({}, (error, events) => {
-      const eventMap = {};
-      events.forEach((event) => {
-        eventMap[event._id] = event;
-      });
-      res.send(eventMap);
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      info: error.message,
-    });
-  }
-};
-
+// add relevant order information to order database
 exports.createOrder = async (req, res, next) => {
-  const { merchantReference, userId, paymentMethod } = req.body;
+  const {
+    merchantReference,
+    userId,
+    paymentMethod,
+    eventId,
+    orderType,
+    amount,
+  } = req.body;
   // console.log(req.body);
-
-  // Orders.deleteMany({});
-
-  // await Orders.find({}, (error, events) => {
-  //   const eventMap = {};
-  //   events.forEach((event) => {
-  //     eventMap[event._id] = event;
-  //   });
-  //   res.send(eventMap);
-  // });
 
   try {
     await Orders.create({
       merchantReference,
-      orderStatus: "unpaid",
+      orderStatus: "pending",
       paymentMethod,
       userId,
+      eventId,
+      amount,
+      orderType,
     });
     res.status(200).json({
       success: true,
@@ -56,8 +41,9 @@ exports.createOrder = async (req, res, next) => {
   }
 };
 
+// called by frontend when the user makes a payment for a product
 exports.makePayment = async (req, res, next) => {
-  const { paymentMethod, paymentAmount, userId } = req.body;
+  const { paymentMethod, paymentAmount, productName } = req.body;
   const latipayUserId = process.env.LATIPAY_USER_ID;
   const walletId = process.env.LATIPAY_WALLET_ID;
   const serverUrl = process.env.PAYMENT_TEST_SERVER;
@@ -83,7 +69,7 @@ exports.makePayment = async (req, res, next) => {
     merchant_reference: merchantReference,
     ip: "122.122.122.1",
     version: "2.0",
-    product_name: "NZCSA Membership",
+    product_name: productName,
   };
 
   if (paymentMethod === "wechat") {
@@ -132,6 +118,7 @@ exports.makePayment = async (req, res, next) => {
   }
 };
 
+// Webhook called by latipay, see latipay documentation for the body of the request, must always return status 200 with message "sent"
 exports.paymentNotification = async (req, res) => {
   const { body } = req;
   console.log(body);
@@ -143,6 +130,7 @@ exports.paymentNotification = async (req, res) => {
     currency,
     amount,
     signature,
+    pay_time,
   } = req.body;
   // console.log(status);
 
@@ -153,35 +141,58 @@ exports.paymentNotification = async (req, res) => {
   // console.log(validateHash);
   // console.log(signature);
 
-  if (signature === validateHash && status === "paid") {
-    console.log("signature validation successful, making the user a member");
+  if (signature !== validateHash) {
+    // validate if message came from Latipay server
+    console.log("signature validation successful");
+    return res.status(400).send("signature validation failed");
+  }
 
+  const order = await Orders.findOne({
+    merchantReference: merchant_reference,
+  });
+
+  if (!order) {
+    console.log("order not found");
+    return res.status(404).send("order not found");
+  }
+
+  if (status === "paid") {
+    // Only dispatch order if transaction is successfully processed to bank account
     try {
-      const order = await Orders.findOne({
-        merchantReference: merchant_reference,
-      });
-
-      if (!order) {
-        console.log("order not found");
-      }
-
-      const { userId } = order;
+      const { userId, eventId, orderType } = order;
       const user = await Users.findOne({ _id: userId });
 
-      console.log(user);
-      console.log(order);
+      if (orderType === "membership-payment") {
+        // handle membership registration
+        console.log(user);
+        console.log(order);
 
-      user.isMembership = true;
-      user.save();
-      order.orderStatus = "paid";
-      order.save();
+        user.isMembership = true;
+        user.save();
+        console.log(`membership added to ${userId}`);
+      } else if (orderType === "event-payment") {
+        // handle event registration
+        const event = await Event.findOne({ _id: eventId });
+
+        user.attendedEvents.push(eventId);
+        event.userList.push(user._id);
+
+        await event.save();
+        await user.save();
+        console.log(`event ${eventId} Added.`);
+      } else {
+        console.log("invalid order type");
+      }
     } catch (error) {
       console.log(error);
     }
-  } else {
-    console.log("signature validation failed or order is not paid");
-    // return res.status(400).send("signature validation failed");
   }
+
+  // executes regardless of outcome to update order
+  order.amount = amount;
+  order.orderStatus = status;
+  order.payTime = pay_time;
+  order.save();
 
   return res.status(200).send("sent");
 };
@@ -201,6 +212,7 @@ exports.paymentNotification = async (req, res) => {
 //   order_id: '2021071100011210'
 // }
 
+// called by frontend when redirected after payment, verifies if they were redirected from latipay
 exports.validateRedirect = async (req, res, next) => {
   const {
     merchant_reference,
@@ -227,4 +239,85 @@ exports.validateRedirect = async (req, res, next) => {
     success: true,
     message: "signature validation successful",
   });
+};
+
+// Api functions for developers to test payment
+
+// get all current orders
+exports.getOrder = async (req, res) => {
+  const merchantReference = req.body;
+
+  try {
+    await Orders.find({}, (error, events) => {
+      const eventMap = {};
+      events.forEach((event) => {
+        eventMap[event._id] = event;
+      });
+      res.send(eventMap);
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      info: error.message,
+    });
+  }
+};
+
+// delete all orders in order database
+exports.deleteAllOrders = async (req, res, next) => {
+  try {
+    await Orders.deleteMany({});
+    return res.status(200).json({
+      success: true,
+      message: "all orders deleted",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// remove membership from yourself
+exports.removeMembership = (req, res, next) => {
+  try {
+    const { user } = req;
+    user.isMembership = false;
+    user.save();
+    return res.status(200).json({
+      success: true,
+      message: `membership removed for user ${user._id}`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// remove yourself from specific event
+exports.removeFromEvent = async (req, res, next) => {
+  const { eventId } = req.body;
+
+  try {
+    const { user } = req;
+    const event = await Event.findOne({ _id: eventId });
+
+    if (!event) {
+      return next(new ErrorResponse("Event not found", 404));
+    }
+
+    const lst = event.userList;
+    const userIndex = lst.indexOf(user._id);
+    const eventIndex = user.attendedEvents.indexOf(eventId);
+
+    event.userList.splice(userIndex, 1);
+    user.attendedEvents.splice(eventIndex, 1);
+
+    await event.save();
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      data: `event ${eventId} removed for you.`,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
