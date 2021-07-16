@@ -21,6 +21,23 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     required: [true, "please provide payment method"],
   },
+
+  orderType: {
+    type: String,
+    required: [true, "There must be order type"],
+  },
+
+  eventId: {
+    type: String,
+  },
+
+  payTime: {
+    type: String,
+  },
+
+  amount: {
+    type: String,
+  },
 });
 
 OrderSchema.pre("save", async (next) => {
