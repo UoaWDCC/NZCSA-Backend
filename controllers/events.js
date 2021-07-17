@@ -125,7 +125,7 @@ exports.modifyEvent = async (req, res, next) => {
 
 exports.deleteEvents = async (req, res, next) => {
   const { eventId } = req.params;
-  console.log(eventId);
+  // console.log(eventId);
   try {
     const selectedEvent = await Event.findById(eventId);
 

@@ -47,16 +47,14 @@ const UserSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ["F", "M"],
-    maxlength: 1,
   },
   university: {
     type: String,
   },
-  major: {
+  stdentId: {
     type: String,
   },
-  year: {
+  phone: {
     type: String,
   },
   faculty: {
