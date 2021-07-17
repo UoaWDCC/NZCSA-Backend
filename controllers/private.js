@@ -1,9 +1,16 @@
 const User = require("../models/User");
 
 exports.signUpMembership = async (req, res) => {
-  const { gender, university, selectedFaculty, dateofbirth, wechatid, phone, stdentId } =
-    req.body;
-    
+  const {
+    gender,
+    university,
+    selectedFaculty,
+    dateofbirth,
+    wechatid,
+    phone,
+    stdentId,
+  } = req.body;
+
   // console.log(req.body)
   try {
     const { user } = req;
@@ -15,7 +22,7 @@ exports.signUpMembership = async (req, res) => {
     user.wechatid = wechatid;
     user.phone = phone;
     user.stdentId = stdentId;
-    
+
     await user.save();
     // console.log(1)
     res.status(200).json({
