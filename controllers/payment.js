@@ -19,7 +19,7 @@ exports.createOrder = async (req, res, next) => {
     orderType,
     amount,
   } = req.body;
-  // console.log(req.body);
+  console.log(req.body);
 
   try {
     await Orders.create({
@@ -62,8 +62,8 @@ exports.makePayment = async (req, res, next) => {
   const body = {
     user_id: latipayUserId,
     wallet_id: walletId,
-    amount: paymentAmount,
     payment_method: paymentMethod,
+    amount: paymentAmount,
     return_url: `${clientUrl}/checkout`,
     callback_url: `${serverUrl}/api/payment/payment-update`,
     merchant_reference: merchantReference,
@@ -78,7 +78,7 @@ exports.makePayment = async (req, res, next) => {
 
   const hash = getSignature(body, true);
   body.signature = hash;
-  // console.log(body);
+  console.log(body);
 
   try {
     const response = await axios.post(
@@ -86,7 +86,7 @@ exports.makePayment = async (req, res, next) => {
       body
     );
 
-    // console.log(response.data)
+    console.log(response.data);
     if (response.data.code === 0) {
       const { nonce, host_url, signature } = response.data;
       const validateMessage = nonce + host_url;
@@ -132,14 +132,14 @@ exports.paymentNotification = async (req, res) => {
     signature,
     pay_time,
   } = req.body;
-  // console.log(status);
+  console.log(status);
 
   const message =
     merchant_reference + payment_method + status + currency + amount;
 
   const validateHash = getSignature(message, false);
-  // console.log(validateHash);
-  // console.log(signature);
+  console.log(validateHash);
+  console.log(signature);
 
   if (signature !== validateHash) {
     // validate if message came from Latipay server
@@ -174,8 +174,14 @@ exports.paymentNotification = async (req, res) => {
         // handle event registration
         const event = await Event.findOne({ _id: eventId });
 
-        user.attendedEvents.push(eventId);
-        event.userList.push(user._id);
+        if (!user.attendedEvents.includes(eventId)) {
+          // check if already register
+          user.attendedEvents.push(eventId);
+        }
+        if (!event.userList.includes(eventId)) {
+          // check if already register
+          event.userList.push(user._id);
+        }
 
         await event.save();
         await user.save();
@@ -239,6 +245,26 @@ exports.validateRedirect = async (req, res, next) => {
     success: true,
     message: "signature validation successful",
   });
+};
+
+// get individual order
+exports.isOrderPaid = async (req, res) => {
+  try {
+    const order = await Orders.findOne({
+      merchantReference: req.params.id,
+    });
+
+    if (order.orderStatus === "paid") {
+      res.status(200).send(order);
+    } else {
+      return res.status(500).send(order);
+    }
+  } catch (error) {
+    res.status(404).json({
+      success: false,
+      error,
+    });
+  }
 };
 
 // Api functions for developers to test payment
