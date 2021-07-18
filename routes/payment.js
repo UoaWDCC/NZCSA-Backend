@@ -8,6 +8,7 @@ const {
   deleteAllOrders,
   removeMembership,
   removeFromEvent,
+  isOrderPaid,
 } = require("../controllers/payment");
 
 const router = express.Router();
@@ -20,6 +21,7 @@ router.route("/payment-update").post(paymentNotification); // this is a webhook 
 router.route("/validate-redirect").post(protect, validateRedirect);
 router.route("/create-order").post(protect, createOrder); // called when user starts payment process
 router.route("/get-order").get(protect, getOrder);
+router.route("/orders/:id").get(protect, isOrderPaid);
 
 // Api functions to test payment for developers
 router.route("/delete-all-orders").post(protect, deleteAllOrders);
