@@ -1,5 +1,6 @@
 const express = require("express");
 const {
+  showLogInfo,
   showMemberList,
   promoToMember,
   deleteMember,
@@ -26,6 +27,9 @@ router
 router
   .route("/show-event-user-info/:eventId")
   .get(protect, checkAdmin, showEventUserInfo);
+
+router.route("/show-log-info").get(protect, checkAdmin, showLogInfo);
+
 router.route("/show-member-list").get(protect, checkAdmin, showMemberList);
 router.route("/promo-to-member").post(protect, checkAdmin, promoToMember);
 router.route("/remove-membership").post(protect, checkAdmin, removeMembership);
