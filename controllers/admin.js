@@ -123,7 +123,6 @@ exports.removeMembership = async (req, res, next) => {
 
 exports.deleteMember = async (req, res, next) => {
   const { userId } = req.params;
-
   try {
     const user = await User.findOne({ _id: userId });
 
@@ -131,23 +130,26 @@ exports.deleteMember = async (req, res, next) => {
       return next(new ErrorResponse("User not found", 400));
     }
 
+    const removedName = user.firstname;
+    const removedID = user._id;
+
     await User.findByIdAndRemove(userId, (error, data) => {
       if (error) {
         return next(error);
       }
 
-      await Log.create({
-        operator: req.user.firstname,
-        event: "deleted user",
-        name: user.firstname,
-        id: user._id,
-        time: new Date().getTime(),
-      });
-
       res.status(200).json({
         success: true,
         data: `${userId} Deleted.`,
       });
+    });
+
+    await Log.create({
+      operator: req.user.firstname,
+      event: "removed user",
+      name: removedName,
+      id: removedID,
+      time: new Date().getTime(),
     });
   } catch (e) {
     next(e);

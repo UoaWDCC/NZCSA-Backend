@@ -168,14 +168,6 @@ exports.paymentNotification = async (req, res) => {
         console.log(user);
         console.log(order);
 
-        await Log.create({
-          operator: user.firstname,
-          event: "subscribed for membership",
-          name: user.firstname,
-          id: user._id,
-          time: new Date().getTime(),
-        });
-
         user.isMembership = true;
         user.save();
         console.log(`membership added to ${userId}`);
