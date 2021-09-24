@@ -1,5 +1,6 @@
 const Event = require("../models/Events");
 const ErrorResponse = require("../utils/errorResponse");
+const Log = require("../models/Logs");
 
 // Normal User API functions:
 exports.getEvents = async (req, res) => {

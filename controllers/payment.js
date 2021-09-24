@@ -6,6 +6,7 @@ const ErrorResponse = require("../utils/errorResponse");
 const Orders = require("../models/Orders");
 const Users = require("../models/User");
 const Event = require("../models/Events");
+const Log = require("../models/Logs");
 
 // Api functions for use in production by user
 
@@ -166,6 +167,14 @@ exports.paymentNotification = async (req, res) => {
         // handle membership registration
         console.log(user);
         console.log(order);
+
+        await Log.create({
+          operator: user.firstname,
+          event: "subscribed for membership",
+          name: user.firstname,
+          id: user._id,
+          time: new Date().getTime(),
+        });
 
         user.isMembership = true;
         user.save();
