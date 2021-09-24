@@ -5,6 +5,10 @@ const LogSchema = new mongoose.Schema({
     type: String,
   },
 
+  userName: {
+    type: String,
+  },
+
   userId: {
     type: String,
   },

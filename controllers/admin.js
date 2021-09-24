@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Event = require("../models/Events");
 const ErrorResponse = require("../utils/errorResponse");
+const Log = require("../models/Logs");
 
 async function findUsers(_id) {
   const user = await User.findOne({ _id });
@@ -48,9 +49,16 @@ exports.showLogInfo = async (req, res, next) => {
 
 exports.promoToMember = async (req, res, next) => {
   const { userId } = req.body;
-
+  
   try {
     const user = await User.findOne({ _id: userId });
+
+    // res.status(200).json({
+    //   operator: req.user.firstname,
+    //   user: user.firstname,
+    //   event: "promoted",
+    //   time: getTime(),
+    // });
 
     if (!user) {
       return next(new ErrorResponse("User not found", 400));
@@ -63,6 +71,13 @@ exports.promoToMember = async (req, res, next) => {
     user.isMembership = true;
 
     await user.save();
+    await Log.create({
+      operator: req.user.firstname,
+      event: "promoted user",
+      name : user.firstname,
+      id : user._id,
+      time: new Date().getTime(),
+    });
 
     res.status(200).json({
       success: true,
@@ -120,6 +135,15 @@ exports.deleteMember = async (req, res, next) => {
       if (error) {
         return next(error);
       }
+
+      await Log.create({
+        operator: req.user.firstname,
+        event: "deleted user",
+        name: user.firstname,
+        id: user._id,
+        time: new Date().getTime(),
+      });
+
       res.status(200).json({
         success: true,
         data: `${userId} Deleted.`,
