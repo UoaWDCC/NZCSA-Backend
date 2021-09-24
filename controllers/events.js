@@ -74,6 +74,14 @@ exports.addEvents = async (req, res, next) => {
       eventImgUrl,
       wechatImgUrl,
     });
+
+    await Log.create({
+      operator: req.user.firstname,
+      event: "created event",
+      name: eventName,
+      time: new Date().getTime(),
+    });
+
     res.status(200).json({
       success: true,
       data: `${eventName} Added.`,
@@ -114,6 +122,13 @@ exports.modifyEvent = async (req, res, next) => {
 
     await selectedEvent.save();
 
+    await Log.create({
+      operator: req.user.firstname,
+      event: "modified event",
+      name: eventName,
+      time: new Date().getTime(),
+    });
+
     res.status(200).json({
       success: true,
       data: `${eventName} Modified.`,
@@ -140,6 +155,14 @@ exports.deleteEvents = async (req, res, next) => {
         if (error) {
           return next(error);
         }
+
+        await Log.create({
+          operator: req.user.firstname,
+          event: "archived event",
+          name: eventName,
+          time: new Date().getTime(),
+        });
+
         res.status(200).json({
           success: true,
           data: `${eventId} archive.`,

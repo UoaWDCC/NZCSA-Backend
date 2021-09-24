@@ -5,15 +5,15 @@ const LogSchema = new mongoose.Schema({
     type: String,
   },
 
-  userName: {
-    type: String,
-  },
-
-  userId: {
-    type: String,
-  },
-
   event: {
+    type: String,
+  },
+
+  name: {
+    type: String,
+  },
+
+  id: {
     type: String,
   },
 
