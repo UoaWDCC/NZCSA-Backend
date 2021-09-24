@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const LogSchema = new mongoose.Schema({
+  operator: {
+    type: String,
+  },
+
   userId: {
     type: String,
   },
