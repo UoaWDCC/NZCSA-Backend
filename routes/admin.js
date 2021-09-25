@@ -11,6 +11,7 @@ const {
   deleteEvents,
   modifyEvent,
 } = require("../controllers/events");
+const { getGoogleSheet } = require("../controllers/googleSheets");
 
 const router = express.Router();
 
@@ -32,5 +33,6 @@ router.route("/remove-membership").post(protect, checkAdmin, removeMembership);
 router
   .route("/delete-member/:userId")
   .delete(protect, checkAdmin, deleteMember);
+router.route("/get-google-sheet").get(protect, checkAdmin, getGoogleSheet);
 
 module.exports = router;
