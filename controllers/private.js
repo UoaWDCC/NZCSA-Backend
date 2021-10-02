@@ -55,5 +55,5 @@ exports.getPrivateData = (req, res, next) => {
 exports.getUserData = (req, res) => {
   res.status(200).json({
     user: req.user,
-  })
-}
+  });
+};

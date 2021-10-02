@@ -126,7 +126,7 @@ exports.modifyEvent = async (req, res, next) => {
       success: true,
       data: `${eventName} Modified.`,
     });
-    
+
     await Log.create({
       operator: req.user.firstname,
       event: "Modified event",
@@ -134,7 +134,6 @@ exports.modifyEvent = async (req, res, next) => {
       id: eventId,
       time: new Date().getTime(),
     });
-
   } catch (e) {
     next(e);
   }

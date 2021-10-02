@@ -1,7 +1,11 @@
 const express = require("express");
 
 const { getEvents, signUpRSVP } = require("../controllers/events");
-const { signUpMembership, getPrivateData, getUserData} = require("../controllers/private");
+const {
+  signUpMembership,
+  getPrivateData,
+  getUserData,
+} = require("../controllers/private");
 
 const router = express.Router();
 

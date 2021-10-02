@@ -58,7 +58,7 @@ exports.showLogInfo = async (req, res, next) => {
 
 exports.promoToMember = async (req, res, next) => {
   const { userId } = req.body;
-  
+
   try {
     const user = await User.findOne({ _id: userId });
 
@@ -76,8 +76,8 @@ exports.promoToMember = async (req, res, next) => {
     await Log.create({
       operator: req.user.firstname,
       event: "Promoted user",
-      name : user.firstname,
-      id : user._id,
+      name: user.firstname,
+      id: user._id,
       time: new Date().getTime(),
     });
 
