@@ -80,6 +80,12 @@ exports.addEvents = async (req, res, next) => {
       success: true,
       data: `${eventName} Added.`,
     });
+    await Log.create({
+      operator: req.user.firstname,
+      event: "created event",
+      name: eventName,
+      time: new Date().getTime(),
+    });
   } catch (e) {
     next(e);
   }

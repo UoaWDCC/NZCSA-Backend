@@ -44,7 +44,7 @@ exports.showMemberList = async (req, res, next) => {
 
 exports.showLogInfo = async (req, res, next) => {
   const { userId } = req.body;
-  //function need to collect log info
+  ////////////////////////////////////function need to collect log info
 };
 
 exports.promoToMember = async (req, res, next) => {
