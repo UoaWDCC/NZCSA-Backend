@@ -43,8 +43,17 @@ exports.showMemberList = async (req, res, next) => {
 };
 
 exports.showLogInfo = async (req, res, next) => {
-  const { userId } = req.body;
-  ////////////////////////////////////function need to collect log info
+  try {
+    await Log.find({}, (error, logs) => {
+      const logMap = [];
+      logs.forEach((log) => {
+        logMap.push(log);
+      });
+      res.send(logMap);
+    });
+  } catch (e) {
+    next(e);
+  }
 };
 
 exports.promoToMember = async (req, res, next) => {
