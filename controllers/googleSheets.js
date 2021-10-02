@@ -21,7 +21,9 @@ exports.getGoogleSheet = async (req, res, next) => {
 
     const rows = await sheet.getRows();
     await sheet.loadHeaderRow();
-    const { headerValues, rowCount } = sheet;
+    let { headerValues } = sheet;
+    const { rowCount } = sheet;
+    headerValues = headerValues.filter((value) => value); // remove empty string headers
 
     rows.forEach((row) => {
       const rowItem = {}; // Row in google sheet
