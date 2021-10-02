@@ -73,7 +73,7 @@ exports.promoToMember = async (req, res, next) => {
     await user.save();
     await Log.create({
       operator: req.user.firstname,
-      event: "promoted user",
+      event: "Promoted user",
       name : user.firstname,
       id : user._id,
       time: new Date().getTime(),
@@ -146,7 +146,7 @@ exports.deleteMember = async (req, res, next) => {
 
     await Log.create({
       operator: req.user.firstname,
-      event: "removed user",
+      event: "Removed user",
       name: removedName,
       id: removedID,
       time: new Date().getTime(),

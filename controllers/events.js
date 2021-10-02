@@ -82,7 +82,7 @@ exports.addEvents = async (req, res, next) => {
     });
     await Log.create({
       operator: req.user.firstname,
-      event: "created event",
+      event: "Created event",
       name: eventName,
       time: new Date().getTime(),
     });
@@ -126,6 +126,15 @@ exports.modifyEvent = async (req, res, next) => {
       success: true,
       data: `${eventName} Modified.`,
     });
+    
+    await Log.create({
+      operator: req.user.firstname,
+      event: "Modified event",
+      name: eventName,
+      id: eventId,
+      time: new Date().getTime(),
+    });
+
   } catch (e) {
     next(e);
   }
@@ -148,13 +157,21 @@ exports.deleteEvents = async (req, res, next) => {
         if (error) {
           return next(error);
         }
-        
+
         res.status(200).json({
           success: true,
           data: `${eventId} archive.`,
         });
       }
     );
+
+    await Log.create({
+      operator: req.user.firstname,
+      event: "Archived event",
+      name: selectedEvent.eventName,
+      id: eventId,
+      time: new Date().getTime(),
+    });
   } catch (error) {
     next(error);
   }
