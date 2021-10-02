@@ -62,13 +62,6 @@ exports.promoToMember = async (req, res, next) => {
   try {
     const user = await User.findOne({ _id: userId });
 
-    // res.status(200).json({
-    //   operator: req.user.firstname,
-    //   user: user.firstname,
-    //   event: "promoted",
-    //   time: getTime(),
-    // });
-
     if (!user) {
       return next(new ErrorResponse("User not found", 400));
     }
