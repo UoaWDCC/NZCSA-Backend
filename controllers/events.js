@@ -1,5 +1,6 @@
 const Event = require("../models/Events");
 const ErrorResponse = require("../utils/errorResponse");
+const Log = require("../models/Logs");
 
 // Normal User API functions:
 exports.getEvents = async (req, res) => {
@@ -74,9 +75,16 @@ exports.addEvents = async (req, res, next) => {
       eventImgUrl,
       wechatImgUrl,
     });
+
     res.status(200).json({
       success: true,
       data: `${eventName} Added.`,
+    });
+    await Log.create({
+      operator: req.user.firstname,
+      event: "Created event",
+      name: eventName,
+      time: new Date().getTime(),
     });
   } catch (e) {
     next(e);
@@ -118,6 +126,14 @@ exports.modifyEvent = async (req, res, next) => {
       success: true,
       data: `${eventName} Modified.`,
     });
+
+    await Log.create({
+      operator: req.user.firstname,
+      event: "Modified event",
+      name: eventName,
+      id: eventId,
+      time: new Date().getTime(),
+    });
   } catch (e) {
     next(e);
   }
@@ -140,12 +156,21 @@ exports.deleteEvents = async (req, res, next) => {
         if (error) {
           return next(error);
         }
+
         res.status(200).json({
           success: true,
           data: `${eventId} archive.`,
         });
       }
     );
+
+    await Log.create({
+      operator: req.user.firstname,
+      event: "Archived event",
+      name: selectedEvent.eventName,
+      id: eventId,
+      time: new Date().getTime(),
+    });
   } catch (error) {
     next(error);
   }

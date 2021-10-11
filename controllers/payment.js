@@ -6,6 +6,7 @@ const ErrorResponse = require("../utils/errorResponse");
 const Orders = require("../models/Orders");
 const Users = require("../models/User");
 const Event = require("../models/Events");
+const Log = require("../models/Logs");
 
 // Api functions for use in production by user
 

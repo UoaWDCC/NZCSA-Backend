@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Event = require("../models/Events");
 const ErrorResponse = require("../utils/errorResponse");
+const Log = require("../models/Logs");
 
 async function findUsers(_id) {
   const user = await User.findOne({ _id });
@@ -41,6 +42,20 @@ exports.showMemberList = async (req, res, next) => {
   }
 };
 
+exports.showLogInfo = async (req, res, next) => {
+  try {
+    await Log.find({}, (error, logs) => {
+      const logMap = [];
+      logs.forEach((log) => {
+        logMap.push(log);
+      });
+      res.send(logMap);
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 exports.promoToMember = async (req, res, next) => {
   const { userId } = req.body;
 
@@ -58,6 +73,13 @@ exports.promoToMember = async (req, res, next) => {
     user.isMembership = true;
 
     await user.save();
+    await Log.create({
+      operator: req.user.firstname,
+      event: "Promoted user",
+      name: user.firstname,
+      id: user._id,
+      time: new Date().getTime(),
+    });
 
     res.status(200).json({
       success: true,
@@ -103,7 +125,6 @@ exports.removeMembership = async (req, res, next) => {
 
 exports.deleteMember = async (req, res, next) => {
   const { userId } = req.params;
-
   try {
     const user = await User.findOne({ _id: userId });
 
@@ -111,14 +132,26 @@ exports.deleteMember = async (req, res, next) => {
       return next(new ErrorResponse("User not found", 400));
     }
 
+    const removedName = user.firstname;
+    const removedID = user._id;
+
     await User.findByIdAndRemove(userId, (error, data) => {
       if (error) {
         return next(error);
       }
+
       res.status(200).json({
         success: true,
         data: `${userId} Deleted.`,
       });
+    });
+
+    await Log.create({
+      operator: req.user.firstname,
+      event: "Removed user",
+      name: removedName,
+      id: removedID,
+      time: new Date().getTime(),
     });
   } catch (e) {
     next(e);
