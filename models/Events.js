@@ -47,6 +47,11 @@ const EventSchema = new mongoose.Schema({
   },
 
   userList: [String],
+
+  googleSheetUrl: {
+    type: String,
+    trim: true,
+  },
 });
 
 EventSchema.pre("save", async (next) => {
