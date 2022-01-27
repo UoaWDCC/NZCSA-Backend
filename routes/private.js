@@ -7,6 +7,8 @@ const {
   getUserData,
 } = require("../controllers/private");
 
+const { addUserToGooleSheet } = require("../controllers/googleSheets");
+
 const router = express.Router();
 
 const { protect } = require("../middleware/auth");
@@ -18,5 +20,6 @@ router.route("/sign-up-membership").post(protect, signUpMembership);
 router.route("/get-user-info").get(protect, getPrivateData);
 router.route("/sign-up-event").post(protect, signUpRSVP);
 // router.route('/cancel-event').post(protect, cancelRSVP);
+router.route("/save-to-google-sheet").post(protect, addUserToGooleSheet);
 
 module.exports = router;
