@@ -6,7 +6,7 @@ exports.signUpMembership = async (req, res) => {
     university,
     selectedFaculty,
     dateofbirth,
-    wechatid,
+    wechatId,
     phone,
     stdentId,
   } = req.body;
@@ -19,7 +19,7 @@ exports.signUpMembership = async (req, res) => {
     user.university = university;
     user.faculty = selectedFaculty;
     user.dateofbirth = dateofbirth;
-    user.wechatid = wechatid;
+    user.wechatId = wechatId;
     user.phone = phone;
     user.stdentId = stdentId;
 

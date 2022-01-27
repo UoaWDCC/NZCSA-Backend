@@ -1,7 +1,5 @@
+/* eslint-disable object-shorthand */
 const { GoogleSpreadsheet } = require("google-spreadsheet");
-
-const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID);
-
 /**
  *
  * @route   api/admin/get-google-sheet
@@ -9,6 +7,8 @@ const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID);
  * @access  admin/private
  */
 exports.getGoogleSheet = async (req, res, next) => {
+  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID);
+
   const data = []; // the data to return
 
   try {
@@ -43,5 +43,37 @@ exports.getGoogleSheet = async (req, res, next) => {
     });
   } catch (e) {
     next(e);
+  }
+};
+
+exports.addUserToGooleSheet = async (req, res, next) => {
+  try {
+    const { name, wechatId, gender, googleSheetId } = req.body;
+    console.log(req.body);
+    const doc = new GoogleSpreadsheet(googleSheetId);
+
+    await doc.useServiceAccountAuth({
+      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      private_key: process.env.GOOGLE_PRIVATE_KEY,
+    });
+    console.log(req.body);
+    await doc.loadInfo();
+
+    const sheet = doc.sheetsByIndex[0];
+
+    // const range = doc.getRange(1, 1, 1, 3);
+    // range.setValue(["Name", "Wechat ID", "Gender"]);
+
+    const row = {
+      Name: name,
+      WechatId: wechatId,
+      Gender: gender,
+    };
+    await sheet.addRow(row);
+    console.log(req.body);
+
+    res.status(200).json({ success: true });
+  } catch (e) {
+    console.log(e);
   }
 };
