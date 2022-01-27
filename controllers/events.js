@@ -63,6 +63,7 @@ exports.addEvents = async (req, res, next) => {
     startTime,
     eventImgUrl,
     wechatImgUrl,
+    googleSheetUrl,
   } = req.body;
 
   try {
@@ -74,6 +75,7 @@ exports.addEvents = async (req, res, next) => {
       startTime,
       eventImgUrl,
       wechatImgUrl,
+      googleSheetUrl,
     });
 
     res.status(200).json({
@@ -101,6 +103,7 @@ exports.modifyEvent = async (req, res, next) => {
     startTime,
     eventImgUrl,
     wechatImgUrl,
+    googleSheetUrl,
   } = req.body;
 
   try {
@@ -110,7 +113,7 @@ exports.modifyEvent = async (req, res, next) => {
       return next(new ErrorResponse("Event does not exist", 404));
     }
 
-    // console.log(selectedEvent);
+    console.log(selectedEvent);
 
     selectedEvent.eventName = eventName;
     selectedEvent.eventLocation = eventLocation;
@@ -119,6 +122,7 @@ exports.modifyEvent = async (req, res, next) => {
     selectedEvent.startTime = startTime;
     selectedEvent.eventImgUrl = eventImgUrl;
     selectedEvent.wechatImgUrl = wechatImgUrl;
+    selectedEvent.googleSheetUrl = googleSheetUrl;
 
     await selectedEvent.save();
 

@@ -21,6 +21,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      - name: Install dependencies
+        run: |
+          if [ -e yarn.lock ]; then
+          yarn install --frozen-lockfile
+          elif [ -e package-lock.json ]; then
+          npm ci
+          else
+          npm i
+          fi
+
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
