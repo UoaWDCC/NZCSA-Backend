@@ -79,10 +79,8 @@ exports.addUserToGooleSheet = async (req, res, next) => {
       WechatId: wechatId,
       Gender: gender,
     };
-    const awaitTimeout = (delay) =>
-      new Promise((resolve) => setTimeout(resolve, delay));
 
-    awaitTimeout(500).then(() => sheet.addRow(row));
+    await sheet.addRow(row);
 
     res.status(200).json({ success: true });
   } catch (e) {
