@@ -49,14 +49,24 @@ exports.getGoogleSheet = async (req, res, next) => {
 exports.addUserToGooleSheet = async (req, res, next) => {
   try {
     const { name, wechatId, gender, googleSheetId } = req.body;
-    console.log(req.body);
-    const doc = new GoogleSpreadsheet(googleSheetId);
+    let doc;
+
+    if (googleSheetId.includes("/")) {
+      const googleSheetIdSplit = googleSheetId.split("/");
+      console.log(googleSheetIdSplit);
+      const { length } = googleSheetIdSplit;
+      let googleSheetIdOnly = googleSheetId;
+      googleSheetIdOnly = googleSheetIdSplit[length - 2];
+      console.log(googleSheetIdOnly);
+      doc = new GoogleSpreadsheet(googleSheetIdOnly);
+    } else {
+      doc = new GoogleSpreadsheet(googleSheetId);
+    }
 
     await doc.useServiceAccountAuth({
       client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       private_key: process.env.GOOGLE_PRIVATE_KEY,
     });
-    console.log(req.body);
     await doc.loadInfo();
 
     const sheet = doc.sheetsByIndex[0];
@@ -69,11 +79,14 @@ exports.addUserToGooleSheet = async (req, res, next) => {
       WechatId: wechatId,
       Gender: gender,
     };
-    await sheet.addRow(row);
-    console.log(req.body);
+    const awaitTimeout = (delay) =>
+      new Promise((resolve) => setTimeout(resolve, delay));
+
+    awaitTimeout(500).then(() => sheet.addRow(row));
 
     res.status(200).json({ success: true });
   } catch (e) {
+    res.status(400).json({ success: false });
     console.log(e);
   }
 };
