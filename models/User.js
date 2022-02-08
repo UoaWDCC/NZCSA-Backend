@@ -63,7 +63,7 @@ const UserSchema = new mongoose.Schema({
   dateofbirth: {
     type: Date,
   },
-  wechatid: {
+  wechatId: {
     type: String,
   },
 
