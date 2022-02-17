@@ -7,6 +7,7 @@ const Orders = require("../models/Orders");
 const Users = require("../models/User");
 const Event = require("../models/Events");
 const Log = require("../models/Logs");
+const addUserToGooleSheetUtil = require("../utils/addUserToGoogleSheetUtil");
 
 // Api functions for use in production by user
 
@@ -178,6 +179,13 @@ exports.paymentNotification = async (req, res) => {
         if (!user.attendedEvents.includes(eventId)) {
           // check if already register
           user.attendedEvents.push(eventId);
+          if (event.googleSheetUrl !== undefined)
+            await addUserToGooleSheetUtil(
+              user.name,
+              user.wechatid,
+              user.gender,
+              event.googleSheetUrl
+            );
         }
         if (!event.userList.includes(eventId)) {
           // check if already register
