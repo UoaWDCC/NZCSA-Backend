@@ -174,18 +174,21 @@ exports.paymentNotification = async (req, res) => {
         console.log(`membership added to ${userId}`);
       } else if (orderType === "event-payment") {
         // handle event registration
+        console.log("event-payment");
         const event = await Event.findOne({ _id: eventId });
 
         if (!user.attendedEvents.includes(eventId)) {
           // check if already register
           user.attendedEvents.push(eventId);
-          if (event.googleSheetUrl !== undefined)
+          if (event.googleSheetUrl !== undefined) {
+            console.log(event.googleSheetUrl);
             await addUserToGooleSheetUtil(
               user.name,
               user.wechatid,
               user.gender,
               event.googleSheetUrl
             );
+          }
         }
         if (!event.userList.includes(eventId)) {
           // check if already register
