@@ -173,6 +173,8 @@ exports.paymentNotification = async (req, res) => {
         user.save();
         console.log(`membership added to ${userId}`);
       } else if (orderType === "event-payment") {
+        console.log(user);
+
         // handle event registration
         console.log("event-payment");
         const event = await Event.findOne({ _id: eventId });
@@ -183,13 +185,15 @@ exports.paymentNotification = async (req, res) => {
           if (event.googleSheetUrl !== undefined) {
             console.log(event.googleSheetUrl);
             console.log(
-              user.name,
-              user.wechatid,
+              user.firstname,
+              user.lastname,
+              user.wechatId,
               user.gender,
               event.googleSheetUrl
             );
+            const name = user.firstname + user.lastname;
             await addUserToGooleSheetUtil(
-              user.name,
+              name,
               user.wechatid,
               user.gender,
               event.googleSheetUrl
