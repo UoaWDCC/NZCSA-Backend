@@ -182,6 +182,12 @@ exports.paymentNotification = async (req, res) => {
           user.attendedEvents.push(eventId);
           if (event.googleSheetUrl !== undefined) {
             console.log(event.googleSheetUrl);
+            console.log(
+              user.name,
+              user.wechatid,
+              user.gender,
+              event.googleSheetUrl
+            );
             await addUserToGooleSheetUtil(
               user.name,
               user.wechatid,
