@@ -1,5 +1,7 @@
 /* eslint-disable object-shorthand */
 const { GoogleSpreadsheet } = require("google-spreadsheet");
+const addUserToGooleSheetUtil = require("../utils/addUserToGoogleSheetUtil");
+
 /**
  *
  * @route   api/admin/get-google-sheet
@@ -49,38 +51,8 @@ exports.getGoogleSheet = async (req, res, next) => {
 exports.addUserToGooleSheet = async (req, res, next) => {
   try {
     const { name, wechatId, gender, googleSheetId } = req.body;
-    let doc;
 
-    if (googleSheetId.includes("/")) {
-      const googleSheetIdSplit = googleSheetId.split("/");
-      console.log(googleSheetIdSplit);
-      const { length } = googleSheetIdSplit;
-      let googleSheetIdOnly = googleSheetId;
-      googleSheetIdOnly = googleSheetIdSplit[length - 2];
-      console.log(googleSheetIdOnly);
-      doc = new GoogleSpreadsheet(googleSheetIdOnly);
-    } else {
-      doc = new GoogleSpreadsheet(googleSheetId);
-    }
-
-    await doc.useServiceAccountAuth({
-      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      private_key: process.env.GOOGLE_PRIVATE_KEY,
-    });
-    await doc.loadInfo();
-
-    const sheet = doc.sheetsByIndex[0];
-
-    // const range = doc.getRange(1, 1, 1, 3);
-    // range.setValue(["Name", "Wechat ID", "Gender"]);
-
-    const row = {
-      Name: name,
-      WechatId: wechatId,
-      Gender: gender,
-    };
-
-    await sheet.addRow(row);
+    await addUserToGooleSheetUtil(name, wechatId, gender, googleSheetId);
 
     res.status(200).json({ success: true });
   } catch (e) {
