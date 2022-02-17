@@ -191,11 +191,12 @@ exports.paymentNotification = async (req, res) => {
               user.gender,
               event.googleSheetUrl
             );
-            const name = user.firstname + user.lastname;
+            // eslint-disable-next-line prefer-template
+            const name = user.firstname + " " + user.lastname;
             await addUserToGooleSheetUtil(
               name,
-              user.wechatid,
-              user.gender,
+              user.wechatId === undefined ? "None" : user.wechatId,
+              user.gender === undefined ? "None" : user.gender,
               event.googleSheetUrl
             );
           }
