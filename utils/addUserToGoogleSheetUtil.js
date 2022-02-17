@@ -13,7 +13,7 @@ const addUserToGooleSheetUtil = async (
     const { length } = googleSheetIdSplit;
     let googleSheetIdOnly = googleSheetId;
     googleSheetIdOnly = googleSheetIdSplit[length - 2];
-    console.log(googleSheetIdOnly);
+    console.log(googleSheetIdOnly, name, wechatId, gender, googleSheetId);
     doc = new GoogleSpreadsheet(googleSheetIdOnly);
   } else {
     doc = new GoogleSpreadsheet(googleSheetId);
