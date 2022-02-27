@@ -1,7 +1,54 @@
+/* eslint-disable camelcase */
+const { OAuth2Client } = require("google-auth-library");
 const crypto = require("crypto");
 const User = require("../models/User");
 const ErrorResponse = require("../utils/errorResponse");
 const sendEmail = require("../utils/sendEmail");
+
+const client = new OAuth2Client(process.env.CLIENT_ID);
+
+const sendToken = (user, statusCode, res) => {
+  const token = user.getSignedToken();
+  const { isAdmin } = user;
+  res.status(statusCode).json({
+    success: true,
+    isAdmin,
+    token,
+  });
+};
+
+exports.checkGoogleAuth = async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    console.log(payload);
+
+    const { email, given_name, family_name } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        firstname: given_name,
+        lastname: family_name,
+        email,
+        password: token,
+      });
+    }
+
+    sendToken(user, 201, res);
+  } catch (e) {
+    res.status(500).json({
+      success: false,
+      info: e.message,
+    });
+  }
+};
 
 exports.register = async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
@@ -14,7 +61,6 @@ exports.register = async (req, res) => {
       password,
     });
 
-    // eslint-disable-next-line no-use-before-define
     sendToken(user, 201, res);
   } catch (error) {
     res.status(500).json({
@@ -211,14 +257,4 @@ exports.resetpassword = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
-
-const sendToken = (user, statusCode, res) => {
-  const token = user.getSignedToken();
-  const { isAdmin } = user;
-  res.status(statusCode).json({
-    success: true,
-    isAdmin,
-    token,
-  });
 };
