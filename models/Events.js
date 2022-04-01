@@ -52,6 +52,12 @@ const EventSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  // Added a new key googleFormUrl by Friday on 2022/4/2.
+  googleFormUrl: {
+    type: String,
+    trim: true,
+    default: ''
+  },
 });
 
 EventSchema.pre("save", async (next) => {

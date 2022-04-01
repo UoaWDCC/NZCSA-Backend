@@ -64,6 +64,7 @@ exports.addEvents = async (req, res, next) => {
     eventImgUrl,
     wechatImgUrl,
     googleSheetUrl,
+    googleFormUrl
   } = req.body;
 
   try {
@@ -76,6 +77,7 @@ exports.addEvents = async (req, res, next) => {
       eventImgUrl,
       wechatImgUrl,
       googleSheetUrl,
+      googleFormUrl
     });
 
     res.status(200).json({
@@ -104,6 +106,7 @@ exports.modifyEvent = async (req, res, next) => {
     eventImgUrl,
     wechatImgUrl,
     googleSheetUrl,
+    googleFormUrl,
   } = req.body;
 
   try {
@@ -123,6 +126,7 @@ exports.modifyEvent = async (req, res, next) => {
     selectedEvent.eventImgUrl = eventImgUrl;
     selectedEvent.wechatImgUrl = wechatImgUrl;
     selectedEvent.googleSheetUrl = googleSheetUrl;
+    selectedEvent.googleFormUrl = googleFormUrl;
 
     await selectedEvent.save();
 
