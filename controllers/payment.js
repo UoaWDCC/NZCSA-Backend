@@ -182,9 +182,16 @@ exports.paymentNotification = async (req, res) => {
         if (!user.attendedEvents.includes(eventId)) {
           // check if already register
           user.attendedEvents.push(eventId);
+          if (!event.userList.includes(eventId)) {
+            // check if already register
+            event.userList.push(user._id);
+          }
+
+          await event.save();
+          await user.save();
           if (
-            event.googleSheetUrl !== null ||
-            typeof event.googleSheetUrl !== "undefined"
+            event.googleSheetUrl !== undefined ||
+            event.googleSheetUrl !== null
           ) {
             console.log(event.googleSheetUrl);
             console.log(
@@ -204,13 +211,7 @@ exports.paymentNotification = async (req, res) => {
             );
           }
         }
-        if (!event.userList.includes(eventId)) {
-          // check if already register
-          event.userList.push(user._id);
-        }
 
-        await event.save();
-        await user.save();
         console.log(`event ${eventId} Added.`);
       } else {
         console.log("invalid order type");
