@@ -182,7 +182,7 @@ exports.paymentNotification = async (req, res) => {
         if (!user.attendedEvents.includes(eventId)) {
           // check if already register
           user.attendedEvents.push(eventId);
-          if (!event.userList.includes(eventId)) {
+          if (!event.userList.includes(user._id)) {
             // check if already register
             event.userList.push(user._id);
           }
