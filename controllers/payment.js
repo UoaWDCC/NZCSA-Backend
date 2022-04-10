@@ -183,8 +183,8 @@ exports.paymentNotification = async (req, res) => {
           // check if already register
           user.attendedEvents.push(eventId);
           if (
-            event.googleSheetUrl !== undefined ||
-            event.googleSheetUrl !== null
+            event.googleSheetUrl !== null ||
+            typeof event.googleSheetUrl !== "undefined"
           ) {
             console.log(event.googleSheetUrl);
             console.log(
