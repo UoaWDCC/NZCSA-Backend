@@ -64,7 +64,7 @@ exports.addEvents = async (req, res, next) => {
     eventImgUrl,
     wechatImgUrl,
     googleSheetUrl,
-    eventGoogleForm
+    eventGoogleForm,
   } = req.body;
 
   try {
@@ -77,7 +77,7 @@ exports.addEvents = async (req, res, next) => {
       eventImgUrl,
       wechatImgUrl,
       googleSheetUrl,
-      eventGoogleForm
+      eventGoogleForm,
     });
 
     res.status(200).json({
