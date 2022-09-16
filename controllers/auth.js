@@ -23,10 +23,9 @@ exports.checkGoogleAuth = async (req, res) => {
   try {
     const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: process.env.CLIENT_ID,
+      requiredAudience: process.env.CLIENT_ID,
     });
     const payload = ticket.getPayload();
-    console.log(payload);
 
     const { email, given_name, family_name } = payload;
 
