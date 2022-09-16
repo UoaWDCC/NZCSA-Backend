@@ -52,6 +52,11 @@ const EventSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+
+  eventGoogleForm: {
+    type: String,
+    trim: true,
+  },
 });
 
 EventSchema.pre("save", async (next) => {
